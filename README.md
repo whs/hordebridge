@@ -12,5 +12,4 @@ I'm not responsible if you get banned from the LLM provider because someone on A
 
 ## License
 
-
-
+[MIT License](https://spdx.org/licenses/MIT.html)
