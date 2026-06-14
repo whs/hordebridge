@@ -11,7 +11,7 @@ type Config struct {
 	HordeModel          string   `help:"Model name to be reported to AI Horde" required:""`
 	WorkerName          string   `help:"Name of the worker" required:""`
 
-	OpenaiServer string `help:"OpenAI server"`
+	OpenaiServer string `help:"OpenAI server" required:""`
 	OpenaiAPIKey string `help:"OpenAI API Key"`
 	OpenaiModel  string `help:"Model to serve. Must support text completion (not chat)" required:""`
 
