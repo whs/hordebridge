@@ -63,7 +63,7 @@ func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
 
 		if job.ID.IsNull() || !job.ID.IsSet() {
 			waitTime = min(3*time.Second, 500*time.Millisecond+waitTime)
-			w.logger.InfoContext(ctx, "No job available", "wait", waitTime)
+			w.logger.DebugContext(ctx, "No job available", "wait", waitTime)
 			sleep(waitTime)
 			continue
 		}
@@ -154,7 +154,6 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		Temperature:     oasOptToOaiOpt[float64](payload.Temperature),
 		TopP:            oasOptToOaiOpt[float64](payload.TopP),
 		//N:               param.NewOpt(int64(payload.N.Or(1))),
-		LogitBias: nil,
 		Stop: openai.CompletionNewParamsStopUnion{
 			OfStringArray: payload.StopSequence,
 		},
