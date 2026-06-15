@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/go-faster/errors"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/packages/param"
@@ -35,6 +36,9 @@ func NewWorker(config Config) (*Worker, error) {
 // Start the main worker loop
 // The worker loop is defined in https://github.com/Haidra-Org/haidra-assets/blob/main/docs/workers.md
 func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
+	waitTime := 0 * time.Second
+	errorCount := 0
+
 	sleep := func(dur time.Duration) {
 		select {
 		case <-ctx.Done():
@@ -42,18 +46,31 @@ func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
 		}
 	}
 
-	waitTime := 0 * time.Second
+	onError := func(err error) bool {
+		errorCount += 1
+
+		if errorCount >= w.config.QuitAfterErrors {
+			w.logger.ErrorContext(ctx, "Too much error, exiting")
+			return true
+		}
+
+		sleep(1 * time.Minute)
+		return false
+	}
 
 	for {
 		if ctx.Err() != nil {
-			w.logger.DebugContext(ctx, "Context error", "err", ctx.Err())
+			if !errors.Is(ctx.Err(), context.Canceled) {
+				w.logger.DebugContext(ctx, "Context error", "err", ctx.Err())
+			}
 			break
 		}
 		job, err := w.GetJob(ctx)
 		if err != nil {
-			// TODO: Abort on excessive failure
-			w.logger.ErrorContext(ctx, "Failed to get job, retrying in 1 min", "err", err)
-			sleep(1 * time.Minute)
+			w.logger.ErrorContext(ctx, "Failed to get job", "err", err)
+			if onError(err) {
+				return
+			}
 			continue
 		}
 
@@ -74,25 +91,41 @@ func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
 		if err != nil {
 			w.logger.ErrorContext(ctx, "Failed to process job. Sending error", "err", err)
 
+			reportable, ok := errors.Into[ReportableError](err)
 			// XXX: Use abortCtx to ensure that if ctx is canceled, this job should be able to send the report
-			_, sendErrErr := w.aihorde.PostTextJobSubmit(abortCtx, &aihorde.SubmitInputKobold{
-				ID:    job.ID.Value,
-				State: aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateFaulted),
-			}, aihorde.PostTextJobSubmitParams{
-				Apikey: w.config.HordeAPIKey,
-			})
-			if sendErrErr != nil {
-				w.logger.ErrorContext(ctx, "Failed to send job error. Exiting", "err", sendErrErr)
-				return
+			if ok {
+				_, sendErrErr := w.aihorde.PostTextJobSubmit(abortCtx, &aihorde.SubmitInputKobold{
+					ID:         job.ID.Value,
+					Generation: reportable.PublicError,
+					State:      aihorde.NewOptSubmitInputKoboldState(reportable.Kind),
+				}, aihorde.PostTextJobSubmitParams{
+					Apikey: w.config.HordeAPIKey,
+				})
+				if sendErrErr != nil {
+					w.logger.ErrorContext(ctx, "Failed to send job error. Exiting", "err", sendErrErr)
+					return
+				}
+			} else {
+				_, sendErrErr := w.aihorde.PostTextJobSubmit(abortCtx, &aihorde.SubmitInputKobold{
+					ID:    job.ID.Value,
+					State: aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateFaulted),
+				}, aihorde.PostTextJobSubmitParams{
+					Apikey: w.config.HordeAPIKey,
+				})
+				if sendErrErr != nil {
+					w.logger.ErrorContext(ctx, "Failed to send job error. Exiting", "err", sendErrErr)
+					return
+				}
 			}
 
-			// TODO: Abort on excessive failure
-			w.logger.ErrorContext(ctx, "Requeueing in 1 min")
-			sleep(1 * time.Minute)
+			if onError(err) {
+				return
+			}
 			continue
 		}
 
 		sleep(100 * time.Millisecond)
+		errorCount = 0
 	}
 }
 
@@ -137,27 +170,37 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 	}
 
 	// TODO: Don't silently truncate maxToken
-	maxTokens := int64(min(payload.MaxLength.Or(w.config.MaxLength), w.config.MaxLength))
+	maxTokens := int64(payload.MaxLength.Or(w.config.MaxLength))
+	if maxTokens > int64(w.config.MaxLength) {
+		return NewReportableError(errors.New("max_length validation error"), aihorde.SubmitInputKoboldStateFaulted, "Requested max length %d > allowed %d", maxTokens, w.config.MaxLength)
+	}
 
-	var presencePenalty param.Opt[float64]
+	additionalParams := make([]option.RequestOption, 0)
+	if topK, ok := payload.TopK.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("top_k", topK))
+	}
+	if minP, ok := payload.MinP.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("min_p", minP))
+	}
+	if typical, ok := payload.Typical.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("typical_p", typical))
+	}
 	if repPen, ok := payload.RepPen.Get(); ok {
-		presencePenalty = param.NewOpt(repPen - 1.0)
+		additionalParams = append(additionalParams, option.WithJSONSet("repetition_penalty", repPen))
 	}
 
 	resp, err := w.openai.Completions.New(ctx, openai.CompletionNewParams{
 		Prompt: openai.CompletionNewParamsPromptUnion{
 			OfString: param.NewOpt(payload.Prompt.Value),
 		},
-		Model:           openai.CompletionNewParamsModel(w.config.OpenaiModel),
-		MaxTokens:       param.NewOpt(maxTokens),
-		PresencePenalty: presencePenalty,
-		Temperature:     oasOptToOaiOpt[float64](payload.Temperature),
-		TopP:            oasOptToOaiOpt[float64](payload.TopP),
-		//N:               param.NewOpt(int64(payload.N.Or(1))),
+		Model:       openai.CompletionNewParamsModel(w.config.OpenaiModel),
+		MaxTokens:   param.NewOpt(maxTokens),
+		Temperature: oasOptToOaiOpt[float64](payload.Temperature),
+		TopP:        oasOptToOaiOpt[float64](payload.TopP),
 		Stop: openai.CompletionNewParamsStopUnion{
 			OfStringArray: payload.StopSequence,
 		},
-	})
+	}, additionalParams...)
 
 	if err != nil {
 		return fmt.Errorf("openai error: %w", err)

@@ -10,6 +10,7 @@ type Config struct {
 	ExtraSlowWorker     bool     `help:"Extra slow workers are excluded from normal requests but users can opt in to use them. Only use when MPS/s < 0.1"`
 	HordeModel          string   `help:"Model name to be reported to AI Horde" required:""`
 	WorkerName          string   `help:"Name of the worker" required:""`
+	QuitAfterErrors     int      `help:"Quit after this many errors" default:"10"`
 
 	OpenaiServer string `help:"OpenAI server" required:""`
 	OpenaiAPIKey string `help:"OpenAI API Key"`

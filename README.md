@@ -22,6 +22,21 @@ I'm not responsible if you get banned from the LLM provider because someone on A
 
 All command line arguments can be specified as environment variables. For example, --horde-api-key can be set as HORDE_API_KEY
 
+## Mapping
+
+Only some model parameters are supported. The others are silently dropped
+
+- max_length
+- temperature
+- top_p
+- stop_sequence
+- top_k
+- min_p
+- typical
+- rep_pen
+
+Note that the underlying API may also not support some of these parameters.
+
 ## License
 
 [MIT License](https://spdx.org/licenses/MIT.html)
