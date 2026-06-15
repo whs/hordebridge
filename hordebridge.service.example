@@ -1,0 +1,33 @@
+# This is an example of systemd **user** service for hordebridge
+
+[Unit]
+Description=Horde bridge
+After=network.target
+
+[Service]
+Type=simple
+Environment=HORDE_API_KEY=
+Environment=HORDE_MODEL=koboldcpp/Llama-3.2-3B
+Environment=MAX_CONTEXT_LENGTH=131072
+Environment=MAX_LENGTH=131072
+Environment=OPENAI_MODEL=unsloth/Llama-3.2-3B-Instruct-GGUF:BF16
+Environment=OPENAI_SERVER=http://localhost:11434/v1/
+Environment=WORKER_NAME=example
+ExecStart=/path/to/hordebridge
+CapabilityBoundingSet=
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=tmpfs
+PrivateDevices=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectHostname=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+PrivateTmp=true
+BindReadOnlyPaths=
+KillSignal=SIGINT
+
+[Install]
+WantedBy=default.target
