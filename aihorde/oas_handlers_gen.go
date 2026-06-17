@@ -71,7 +71,7 @@ func (s *Server) handleDeleteFilterSingleRequest(args [1]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -226,7 +226,7 @@ func (s *Server) handleDeleteImageAsyncStatusRequest(args [1]string, argsEscaped
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -377,7 +377,7 @@ func (s *Server) handleDeleteInterrogationStatusRequest(args [1]string, argsEsca
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -528,7 +528,7 @@ func (s *Server) handleDeleteOperationsBlockWorkerIPRequest(args [1]string, args
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -683,7 +683,7 @@ func (s *Server) handleDeleteOperationsIPRequest(args [0]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -849,7 +849,7 @@ func (s *Server) handleDeleteSharedKeySingleRequest(args [1]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -1004,7 +1004,7 @@ func (s *Server) handleDeleteSingleCollectionRequest(args [1]string, argsEscaped
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -1159,7 +1159,7 @@ func (s *Server) handleDeleteSingleImageStyleRequest(args [1]string, argsEscaped
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -1314,7 +1314,7 @@ func (s *Server) handleDeleteSingleImageStyleExampleRequest(args [2]string, args
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -1473,7 +1473,7 @@ func (s *Server) handleDeleteSingleTextStyleRequest(args [1]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -1628,7 +1628,7 @@ func (s *Server) handleDeleteSingleWorkerMessageRequest(args [1]string, argsEsca
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -1747,8 +1747,7 @@ func (s *Server) handleDeleteSingleWorkerMessageRequest(args [1]string, argsEsca
 
 // handleDeleteTeamSingleRequest handles delete_team_single operation.
 //
-// Only the team's creator or a horde moderator can use this endpoint.
-// This action is unrecoverable!.
+// Only the team's creator or a horde moderator can use this endpoint. This action is unrecoverable!.
 //
 // DELETE /v2/teams/{team_id}
 func (s *Server) handleDeleteTeamSingleRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -1784,7 +1783,7 @@ func (s *Server) handleDeleteTeamSingleRequest(args [1]string, argsEscaped bool,
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -1939,7 +1938,7 @@ func (s *Server) handleDeleteTextAsyncStatusRequest(args [1]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -2054,10 +2053,9 @@ func (s *Server) handleDeleteTextAsyncStatusRequest(args [1]string, argsEscaped 
 
 // handleDeleteUserSingleRequest handles delete_user_single operation.
 //
-// Only the user or a horde moderator can use this endpoint.
-// A deleted user will initially be hidden and cannot be used anymore
-// After a month of being set as deleted, the same request will wipe the user permanently this action
-// is then irreversible!.
+// Only the user or a horde moderator can use this endpoint. A deleted user will initially be hidden
+// and cannot be used anymore After a month of being set as deleted, the same request will wipe the
+// user permanently this action is then irreversible!.
 //
 // DELETE /v2/users/{user_id}
 func (s *Server) handleDeleteUserSingleRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -2093,7 +2091,7 @@ func (s *Server) handleDeleteUserSingleRequest(args [1]string, argsEscaped bool,
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -2212,10 +2210,9 @@ func (s *Server) handleDeleteUserSingleRequest(args [1]string, argsEscaped bool,
 
 // handleDeleteWorkerSingleRequest handles delete_worker_single operation.
 //
-// This will delete the worker and their statistics. Will not affect the kudos generated by that
-// worker for their owner.
-// Only the worker's owner and an admin can use this endpoint.
-// This action is unrecoverable!.
+// This will delete the worker and their statistics. Will not affect the kudos generated by that worker
+// for their owner. Only the worker's owner and an admin can use this endpoint. This action is
+// unrecoverable!.
 //
 // DELETE /v2/workers/{worker_id}
 func (s *Server) handleDeleteWorkerSingleRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -2251,7 +2248,7 @@ func (s *Server) handleDeleteWorkerSingleRequest(args [1]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -2406,7 +2403,7 @@ func (s *Server) handleGetCollectionRequest(args [0]string, argsEscaped bool, w 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -2565,7 +2562,7 @@ func (s *Server) handleGetDocsPrivacyRequest(args [0]string, argsEscaped bool, w
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -2716,7 +2713,7 @@ func (s *Server) handleGetDocsSponsorsRequest(args [0]string, argsEscaped bool, 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -2867,7 +2864,7 @@ func (s *Server) handleGetDocsTermsRequest(args [0]string, argsEscaped bool, w h
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -3018,7 +3015,7 @@ func (s *Server) handleGetFilterRegexRequest(args [0]string, argsEscaped bool, w
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -3173,7 +3170,7 @@ func (s *Server) handleGetFilterSingleRequest(args [1]string, argsEscaped bool, 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -3328,7 +3325,7 @@ func (s *Server) handleGetFiltersRequest(args [0]string, argsEscaped bool, w htt
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -3487,7 +3484,7 @@ func (s *Server) handleGetFindUserRequest(args [0]string, argsEscaped bool, w ht
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -3638,7 +3635,7 @@ func (s *Server) handleGetHeartbeatRequest(args [0]string, argsEscaped bool, w h
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -3781,7 +3778,7 @@ func (s *Server) handleGetHordeLoadRequest(args [0]string, argsEscaped bool, w h
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -3928,7 +3925,7 @@ func (s *Server) handleGetHordeModesRequest(args [0]string, argsEscaped bool, w 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -4075,7 +4072,7 @@ func (s *Server) handleGetHordeNewsRequest(args [0]string, argsEscaped bool, w h
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -4223,7 +4220,7 @@ func (s *Server) handleGetImageAsyncCheckRequest(args [1]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -4339,10 +4336,8 @@ func (s *Server) handleGetImageAsyncCheckRequest(args [1]string, argsEscaped boo
 // handleGetImageAsyncStatusRequest handles get_image_async_status operation.
 //
 // This request will include all already generated images in download URL or base64 encoded .webp
-// files.
-// As such, you are requested to not retrieve this endpoint often. Instead use the /check/ endpoint
-// first
-// This endpoint is limited to 10 request per minute.
+// files. As such, you are requested to not retrieve this endpoint often. Instead use the /check/
+// endpoint first This endpoint is limited to 10 request per minute.
 //
 // GET /v2/generate/status/{id}
 func (s *Server) handleGetImageAsyncStatusRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -4378,7 +4373,7 @@ func (s *Server) handleGetImageAsyncStatusRequest(args [1]string, argsEscaped bo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -4529,7 +4524,7 @@ func (s *Server) handleGetImageHordeStatsModelsRequest(args [0]string, argsEscap
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -4680,7 +4675,7 @@ func (s *Server) handleGetImageHordeStatsTotalsRequest(args [0]string, argsEscap
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -4827,7 +4822,7 @@ func (s *Server) handleGetImageStyleRequest(args [0]string, argsEscaped bool, w 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -4954,9 +4949,8 @@ func (s *Server) handleGetImageStyleRequest(args [0]string, argsEscaped bool, w 
 
 // handleGetInterrogationStatusRequest handles get_interrogation_status operation.
 //
-// This request will include all already generated images.
-// As such, you are requested to not retrieve this endpoint often. Instead use the /check/ endpoint
-// first.
+// This request will include all already generated images. As such, you are requested to not retrieve
+// this endpoint often. Instead use the /check/ endpoint first.
 //
 // GET /v2/interrogate/status/{id}
 func (s *Server) handleGetInterrogationStatusRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -4992,7 +4986,7 @@ func (s *Server) handleGetInterrogationStatusRequest(args [1]string, argsEscaped
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -5143,7 +5137,7 @@ func (s *Server) handleGetModelSingleRequest(args [1]string, argsEscaped bool, w
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -5294,7 +5288,7 @@ func (s *Server) handleGetModelsRequest(args [0]string, argsEscaped bool, w http
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -5457,7 +5451,7 @@ func (s *Server) handleGetOperationsIPRequest(args [0]string, argsEscaped bool, 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -5608,7 +5602,7 @@ func (s *Server) handleGetOperationsIPSingleRequest(args [1]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -5763,7 +5757,7 @@ func (s *Server) handleGetSharedKeySingleRequest(args [1]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -5914,7 +5908,7 @@ func (s *Server) handleGetSingleCollectionRequest(args [1]string, argsEscaped bo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -6065,7 +6059,7 @@ func (s *Server) handleGetSingleCollectionByNameRequest(args [1]string, argsEsca
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -6216,7 +6210,7 @@ func (s *Server) handleGetSingleImageStyleRequest(args [1]string, argsEscaped bo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -6367,7 +6361,7 @@ func (s *Server) handleGetSingleImageStyleByNameRequest(args [1]string, argsEsca
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -6518,7 +6512,7 @@ func (s *Server) handleGetSingleTextStyleRequest(args [1]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -6669,7 +6663,7 @@ func (s *Server) handleGetSingleTextStyleByNameRequest(args [1]string, argsEscap
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -6820,7 +6814,7 @@ func (s *Server) handleGetSingleWorkerMessageRequest(args [1]string, argsEscaped
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -6971,7 +6965,7 @@ func (s *Server) handleGetTeamSingleRequest(args [1]string, argsEscaped bool, w 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -7126,7 +7120,7 @@ func (s *Server) handleGetTeamsRequest(args [0]string, argsEscaped bool, w http.
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -7273,7 +7267,7 @@ func (s *Server) handleGetTextAsyncStatusRequest(args [1]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -7424,7 +7418,7 @@ func (s *Server) handleGetTextHordeStatsModelsRequest(args [0]string, argsEscape
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -7571,7 +7565,7 @@ func (s *Server) handleGetTextHordeStatsTotalsRequest(args [0]string, argsEscape
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -7718,7 +7712,7 @@ func (s *Server) handleGetTextStyleRequest(args [0]string, argsEscaped bool, w h
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -7881,7 +7875,7 @@ func (s *Server) handleGetUserSingleRequest(args [1]string, argsEscaped bool, w 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -8036,7 +8030,7 @@ func (s *Server) handleGetUsersRequest(args [0]string, argsEscaped bool, w http.
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -8191,7 +8185,7 @@ func (s *Server) handleGetWorkerMessagesRequest(args [0]string, argsEscaped bool
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -8322,8 +8316,8 @@ func (s *Server) handleGetWorkerMessagesRequest(args [0]string, argsEscaped bool
 
 // handleGetWorkerSingleRequest handles get_worker_single operation.
 //
-// Can retrieve the details of a worker even if inactive
-// (A worker is considered inactive if it has not checked in for 5 minutes).
+// Can retrieve the details of a worker even if inactive (A worker is considered inactive if it has not
+// checked in for 5 minutes).
 //
 // GET /v2/workers/{worker_id}
 func (s *Server) handleGetWorkerSingleRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -8359,7 +8353,7 @@ func (s *Server) handleGetWorkerSingleRequest(args [1]string, argsEscaped bool, 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -8478,8 +8472,8 @@ func (s *Server) handleGetWorkerSingleRequest(args [1]string, argsEscaped bool, 
 
 // handleGetWorkerSingleNameRequest handles get_worker_single_name operation.
 //
-// Can retrieve the details of a worker even if inactive
-// (A worker is considered inactive if it has not checked in for 5 minutes).
+// Can retrieve the details of a worker even if inactive (A worker is considered inactive if it has not
+// checked in for 5 minutes).
 //
 // GET /v2/workers/name/{worker_name}
 func (s *Server) handleGetWorkerSingleNameRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -8515,7 +8509,7 @@ func (s *Server) handleGetWorkerSingleNameRequest(args [1]string, argsEscaped bo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -8670,7 +8664,7 @@ func (s *Server) handleGetWorkersRequest(args [0]string, argsEscaped bool, w htt
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -8829,7 +8823,7 @@ func (s *Server) handlePatchFilterSingleRequest(args [1]string, argsEscaped bool
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -8999,7 +8993,7 @@ func (s *Server) handlePatchSharedKeySingleRequest(args [1]string, argsEscaped b
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -9169,7 +9163,7 @@ func (s *Server) handlePatchSingleCollectionRequest(args [1]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -9339,7 +9333,7 @@ func (s *Server) handlePatchSingleImageStyleRequest(args [1]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -9509,7 +9503,7 @@ func (s *Server) handlePatchSingleImageStyleExampleRequest(args [2]string, argsE
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -9683,7 +9677,7 @@ func (s *Server) handlePatchSingleTextStyleRequest(args [1]string, argsEscaped b
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -9853,7 +9847,7 @@ func (s *Server) handlePatchTeamSingleRequest(args [1]string, argsEscaped bool, 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -9987,14 +9981,11 @@ func (s *Server) handlePatchTeamSingleRequest(args [1]string, argsEscaped bool, 
 
 // handlePostAestheticsRequest handles post_aesthetics operation.
 //
-// AI
-// The request has to have been sent as shared: true.
-// You can select the best image in the set, and/or provide a rating for each or some images in the
-// set.
-// If you select best-of image, you will gain 4 kudos. Each rating is 5 kudos. Best-of will be
-// ignored when ratings conflict with it.
-// You can never gain more kudos than you spent for this generation. Your reward at max will be your
-// kudos consumption - 1.
+// AI The request has to have been sent as shared: true. You can select the best image in the set,
+// and/or provide a rating for each or some images in the set. If you select best-of image, you will
+// gain 4 kudos. Each rating is 5 kudos. Best-of will be ignored when ratings conflict with it. You can
+// never gain more kudos than you spent for this generation. Your reward at max will be your kudos
+// consumption - 1.
 //
 // POST /v2/generate/rate/{id}
 func (s *Server) handlePostAestheticsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -10030,7 +10021,7 @@ func (s *Server) handlePostAestheticsRequest(args [1]string, argsEscaped bool, w
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -10196,7 +10187,7 @@ func (s *Server) handlePostAwardKudosRequest(args [0]string, argsEscaped bool, w
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -10358,7 +10349,7 @@ func (s *Server) handlePostCollectionRequest(args [0]string, argsEscaped bool, w
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -10524,7 +10515,7 @@ func (s *Server) handlePostFiltersRequest(args [0]string, argsEscaped bool, w ht
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -10654,11 +10645,10 @@ func (s *Server) handlePostFiltersRequest(args [0]string, argsEscaped bool, w ht
 
 // handlePostImageAsyncGenerateRequest handles post_image_async_generate operation.
 //
-// This endpoint will immediately return with the UUID of the request for generation.
-// This endpoint will always be accepted, even if there are no workers available currently to fulfill
-// this request.
-// Perhaps some will appear in the next 10 minutes.
-// Asynchronous requests live for 10 minutes before being considered stale and being deleted.
+// This endpoint will immediately return with the UUID of the request for generation. This endpoint
+// will always be accepted, even if there are no workers available currently to fulfill this request.
+// Perhaps some will appear in the next 10 minutes. Asynchronous requests live for 10 minutes before
+// being considered stale and being deleted.
 //
 // POST /v2/generate/async
 func (s *Server) handlePostImageAsyncGenerateRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -10694,7 +10684,7 @@ func (s *Server) handlePostImageAsyncGenerateRequest(args [0]string, argsEscaped
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -10860,7 +10850,7 @@ func (s *Server) handlePostImageJobPopRequest(args [0]string, argsEscaped bool, 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -11022,7 +11012,7 @@ func (s *Server) handlePostImageJobSubmitRequest(args [0]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -11184,7 +11174,7 @@ func (s *Server) handlePostImageStyleRequest(args [0]string, argsEscaped bool, w
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -11350,7 +11340,7 @@ func (s *Server) handlePostImageStyleExampleRequest(args [1]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -11484,11 +11474,10 @@ func (s *Server) handlePostImageStyleExampleRequest(args [1]string, argsEscaped 
 
 // handlePostInterrogateRequest handles post_interrogate operation.
 //
-// This endpoint will immediately return with the UUID of the request for interrogation.
-// This endpoint will always be accepted, even if there are no workers available currently to fulfill
-// this request.
-// Perhaps some will appear in the next 20 minutes.
-// Asynchronous requests live for 20 minutes before being considered stale and being deleted.
+// This endpoint will immediately return with the UUID of the request for interrogation. This endpoint
+// will always be accepted, even if there are no workers available currently to fulfill this request.
+// Perhaps some will appear in the next 20 minutes. Asynchronous requests live for 20 minutes before
+// being considered stale and being deleted.
 //
 // POST /v2/interrogate/async
 func (s *Server) handlePostInterrogateRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -11524,7 +11513,7 @@ func (s *Server) handlePostInterrogateRequest(args [0]string, argsEscaped bool, 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -11690,7 +11679,7 @@ func (s *Server) handlePostInterrogatePopRequest(args [0]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -11852,7 +11841,7 @@ func (s *Server) handlePostInterrogateSubmitRequest(args [0]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -12014,7 +12003,7 @@ func (s *Server) handlePostOperationsIPRequest(args [0]string, argsEscaped bool,
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -12180,7 +12169,7 @@ func (s *Server) handlePostTeamsRequest(args [0]string, argsEscaped bool, w http
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -12310,11 +12299,10 @@ func (s *Server) handlePostTeamsRequest(args [0]string, argsEscaped bool, w http
 
 // handlePostTextAsyncGenerateRequest handles post_text_async_generate operation.
 //
-// This endpoint will immediately return with the UUID of the request for generation.
-// This endpoint will always be accepted, even if there are no workers available currently to fulfill
-// this request.
-// Perhaps some will appear in the next 20 minutes.
-// Asynchronous requests live for 20 minutes before being considered stale and being deleted.
+// This endpoint will immediately return with the UUID of the request for generation. This endpoint
+// will always be accepted, even if there are no workers available currently to fulfill this request.
+// Perhaps some will appear in the next 20 minutes. Asynchronous requests live for 20 minutes before
+// being considered stale and being deleted.
 //
 // POST /v2/generate/text/async
 func (s *Server) handlePostTextAsyncGenerateRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -12350,7 +12338,7 @@ func (s *Server) handlePostTextAsyncGenerateRequest(args [0]string, argsEscaped 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -12516,7 +12504,7 @@ func (s *Server) handlePostTextJobPopRequest(args [0]string, argsEscaped bool, w
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -12678,7 +12666,7 @@ func (s *Server) handlePostTextJobSubmitRequest(args [0]string, argsEscaped bool
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -12840,7 +12828,7 @@ func (s *Server) handlePostTextStyleRequest(args [0]string, argsEscaped bool, w 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -13006,7 +12994,7 @@ func (s *Server) handlePostTransferKudosRequest(args [0]string, argsEscaped bool
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -13172,7 +13160,7 @@ func (s *Server) handlePostWorkerMessagesRequest(args [0]string, argsEscaped boo
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -13338,7 +13326,7 @@ func (s *Server) handlePutFiltersRequest(args [0]string, argsEscaped bool, w htt
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -13504,7 +13492,7 @@ func (s *Server) handlePutHordeModesRequest(args [0]string, argsEscaped bool, w 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -13666,7 +13654,7 @@ func (s *Server) handlePutOperationsBlockWorkerIPRequest(args [1]string, argsEsc
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -13836,7 +13824,7 @@ func (s *Server) handlePutSharedKeyRequest(args [0]string, argsEscaped bool, w h
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -14002,7 +13990,7 @@ func (s *Server) handlePutUserSingleRequest(args [1]string, argsEscaped bool, w 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 
@@ -14170,7 +14158,7 @@ func (s *Server) handlePutWorkerSingleRequest(args [1]string, argsEscaped bool, 
 		if code != 0 {
 			codeAttr := semconv.HTTPResponseStatusCode(code)
 			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
+			span.SetAttributes(attrs...)
 		}
 		attrOpt := metric.WithAttributes(attrs...)
 

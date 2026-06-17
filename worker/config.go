@@ -11,6 +11,7 @@ type Config struct {
 	HordeModel          string   `help:"Model name to be reported to AI Horde" required:""`
 	WorkerName          string   `help:"Name of the worker" required:""`
 	QuitAfterErrors     int      `help:"Quit after this many errors" default:"10"`
+	ResponsesAPI        bool     `help:"Try to parse chat template and use Responses API instead of text completion" default:"false"`
 
 	OpenaiServer string `help:"OpenAI server" required:""`
 	OpenaiAPIKey string `help:"OpenAI API Key"`

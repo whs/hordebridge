@@ -9,15 +9,17 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
-	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/whs/hordebridge/aihorde"
+	"github.com/whs/hordebridge/worker/inference"
+	"github.com/whs/hordebridge/worker/inference/openresponses"
 )
 
 type Worker struct {
-	config  Config
-	logger  *slog.Logger
-	aihorde *aihorde.Client
-	openai  openai.Client
+	config     Config
+	logger     *slog.Logger
+	aihorde    *aihorde.Client
+	openai     openai.Client
+	completion inference.TextInference
 }
 
 func NewWorker(config Config) (*Worker, error) {
@@ -25,11 +27,28 @@ func NewWorker(config Config) (*Worker, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	openaiClient := openai.NewClient(option.WithAPIKey(config.OpenaiAPIKey), option.WithBaseURL(config.OpenaiServer))
+
+	var completion inference.TextInference
+	completion = inference.NewOpenAICompletion(openaiClient, inference.OpenAICompletionConfig{
+		Model: config.OpenaiModel,
+	})
+
+	if config.ResponsesAPI {
+		slog.Info("Creating worker with responses API parsing")
+		completion = openresponses.New(openaiClient, openresponses.ResponsesConfig{
+			Model:    config.OpenaiModel,
+			Fallback: completion,
+		})
+	}
+
 	return &Worker{
-		config:  config,
-		logger:  slog.Default().With("module", "worker"),
-		aihorde: aihordeClient,
-		openai:  openai.NewClient(option.WithAPIKey(config.OpenaiAPIKey), option.WithBaseURL(config.OpenaiServer)),
+		config:     config,
+		logger:     slog.Default().With("module", "worker"),
+		aihorde:    aihordeClient,
+		openai:     openaiClient,
+		completion: completion,
 	}, nil
 }
 
@@ -169,53 +188,20 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		return fmt.Errorf("no job payload")
 	}
 
-	// TODO: Don't silently truncate maxToken
-	maxTokens := int64(payload.MaxLength.Or(w.config.MaxLength))
-	if maxTokens > int64(w.config.MaxLength) {
-		return NewReportableError(errors.New("max_length validation error"), aihorde.SubmitInputKoboldStateFaulted, "Requested max length %d > allowed %d", maxTokens, w.config.MaxLength)
+	if maxLength, ok := payload.MaxLength.Get(); ok && maxLength > w.config.MaxLength {
+		return NewReportableError(errors.New("max_length validation error"), aihorde.SubmitInputKoboldStateFaulted, "Requested max length %d > allowed %d", maxLength, w.config.MaxLength)
 	}
 
-	additionalParams := make([]option.RequestOption, 0)
-	if topK, ok := payload.TopK.Get(); ok {
-		additionalParams = append(additionalParams, option.WithJSONSet("top_k", topK))
-	}
-	if minP, ok := payload.MinP.Get(); ok {
-		additionalParams = append(additionalParams, option.WithJSONSet("min_p", minP))
-	}
-	if typical, ok := payload.Typical.Get(); ok {
-		additionalParams = append(additionalParams, option.WithJSONSet("typical_p", typical))
-	}
-	if repPen, ok := payload.RepPen.Get(); ok {
-		additionalParams = append(additionalParams, option.WithJSONSet("repetition_penalty", repPen))
-	}
-
-	resp, err := w.openai.Completions.New(ctx, openai.CompletionNewParams{
-		Prompt: openai.CompletionNewParamsPromptUnion{
-			OfString: param.NewOpt(payload.Prompt.Value),
-		},
-		Model:       openai.CompletionNewParamsModel(w.config.OpenaiModel),
-		MaxTokens:   param.NewOpt(maxTokens),
-		Temperature: oasOptToOaiOpt[float64](payload.Temperature),
-		TopP:        oasOptToOaiOpt[float64](payload.TopP),
-		Stop: openai.CompletionNewParamsStopUnion{
-			OfStringArray: payload.StopSequence,
-		},
-	}, additionalParams...)
-
+	generation, err := w.completion.GenerateText(ctx, job)
 	if err != nil {
-		return fmt.Errorf("openai error: %w", err)
+		return fmt.Errorf("inference error: %w", err)
 	}
 
-	if len(resp.Choices) == 0 {
-		return fmt.Errorf("openai returned no choices")
-	}
-
-	logger.InfoContext(ctx, "Sending job result", "length", len(resp.Choices[0].Text))
+	logger.InfoContext(ctx, "Sending job result", "length", len(generation))
 	submitRes, err := w.aihorde.PostTextJobSubmit(ctx, &aihorde.SubmitInputKobold{
-		ID:          job.ID.Value,
-		Generation:  resp.Choices[0].Text,
-		State:       aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateOk),
-		GenMetadata: nil,
+		ID:         job.ID.Value,
+		Generation: generation,
+		State:      aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateOk),
 	}, aihorde.PostTextJobSubmitParams{
 		Apikey: w.config.HordeAPIKey,
 	})

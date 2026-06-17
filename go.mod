@@ -3,6 +3,7 @@ module github.com/whs/hordebridge
 go 1.26.4
 
 require (
+	github.com/alecthomas/assert/v2 v2.11.0
 	github.com/alecthomas/kong v1.15.0
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.2.0
@@ -14,6 +15,7 @@ require (
 )
 
 require (
+	github.com/alecthomas/repr v0.5.2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/fatih/color v1.19.0 // indirect
@@ -22,6 +24,7 @@ require (
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect

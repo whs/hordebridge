@@ -5552,8 +5552,8 @@ func decodeGetImageAsyncStatusParams(args [1]string, argsEscaped bool, r *http.R
 type GetImageHordeStatsModelsParams struct {
 	// The client name and version.
 	ClientAgent OptString `json:",omitempty,omitzero"`
-	// If 'known', only show stats for known models in the model reference. If 'custom' only show stats
-	// for custom models. If 'all' shows stats for all models.
+	// If 'known', only show stats for known models in the model reference. If 'custom' only show stats for
+	// custom models. If 'all' shows stats for all models.
 	ModelState OptString `json:",omitempty,omitzero"`
 	// An optional fields mask.
 	XFields OptString `json:",omitempty,omitzero"`
@@ -6532,8 +6532,8 @@ type GetModelsParams struct {
 	MinCount OptInt `json:",omitempty,omitzero"`
 	// Filter the models that have at most this amount of threads serving.
 	MaxCount OptInt `json:",omitempty,omitzero"`
-	// If 'known', only show stats for known models in the model reference. If 'custom' only show stats
-	// for custom models. If 'all' shows stats for all models.
+	// If 'known', only show stats for known models in the model reference. If 'custom' only show stats for
+	// custom models. If 'all' shows stats for all models.
 	ModelState OptString `json:",omitempty,omitzero"`
 	// An optional fields mask.
 	XFields OptString `json:",omitempty,omitzero"`
@@ -10151,8 +10151,8 @@ type GetWorkerMessagesParams struct {
 	UserID OptString `json:",omitempty,omitzero"`
 	// Filter the messages by worker id (numerical).
 	WorkerID OptString `json:",omitempty,omitzero"`
-	// Filter messages based on whether they're expired or not. Possible values are 'active', 'expired'
-	// and 'all.
+	// Filter messages based on whether they're expired or not. Possible values are 'active', 'expired' and
+	// 'all.
 	Validity OptString `json:",omitempty,omitzero"`
 	// Which page of results to return. Each page has 50 messages.
 	Page OptInt `json:",omitempty,omitzero"`

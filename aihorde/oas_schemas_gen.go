@@ -217,13 +217,11 @@ type AestheticRating struct {
 	ID string `json:"id"`
 	// The aesthetic rating 1-10 for this image.
 	Rating int `json:"rating"`
-	// The artifacts rating for this image.
-	// 0 for flawless generation that perfectly fits to the prompt.
-	// 1 for small, hardly recognizable flaws.
-	// 2 small flaws that can easily be spotted, but don not harm the aesthetic experience.
-	// 3 for flaws that look obviously wrong, but only mildly harm the aesthetic experience.
-	// 4 for flaws that look obviously wrong & significantly harm the aesthetic experience.
-	// 5 for flaws that make the image look like total garbage.
+	// The artifacts rating for this image. 0 for flawless generation that perfectly fits to the prompt. 1
+	// for small, hardly recognizable flaws. 2 small flaws that can easily be spotted, but don not harm the
+	// aesthetic experience. 3 for flaws that look obviously wrong, but only mildly harm the aesthetic
+	// experience. 4 for flaws that look obviously wrong & significantly harm the aesthetic experience. 5
+	// for flaws that make the image look like total garbage.
 	Artifacts OptInt `json:"artifacts"`
 }
 
@@ -688,15 +686,14 @@ type GenerationInputKobold struct {
 	Params OptModelGenerationInputKobold `json:"params"`
 	// Specify which softpompt needs to be used to service this request.
 	Softprompt OptString `json:"softprompt"`
-	// When true, only trusted workers will serve this request. When False, Evaluating workers will also
-	// be used which can increase speed but adds more risk!.
+	// When true, only trusted workers will serve this request. When False, Evaluating workers will also be
+	// used which can increase speed but adds more risk!.
 	TrustedWorkers OptBool `json:"trusted_workers"`
 	// When true, only inference backends that are validated by the AI Horde devs will serve this request.
-	//  When False, non-validated backends will also be used which can increase speed but you may end up
+	// When False, non-validated backends will also be used which can increase speed but you may end up
 	// with unexpected results.
 	ValidatedBackends OptBool `json:"validated_backends"`
-	// When True, allows slower workers to pick up this request. Disabling this incurs an extra kudos
-	// cost.
+	// When True, allows slower workers to pick up this request. Disabling this incurs an extra kudos cost.
 	SlowWorkers OptBool  `json:"slow_workers"`
 	Workers     []string `json:"workers"`
 	// If true, the worker list will be treated as a blacklist instead of a whitelist.
@@ -704,8 +701,8 @@ type GenerationInputKobold struct {
 	Models          []string `json:"models"`
 	// When true, the endpoint will simply return the cost of the request in kudos and exit.
 	DryRun OptBool `json:"dry_run"`
-	// If using a service account as a proxy, provide this value to identify the actual account from
-	// which this request is coming from.
+	// If using a service account as a proxy, provide this value to identify the actual account from which
+	// this request is coming from.
 	ProxiedAccount    OptString          `json:"proxied_account"`
 	ExtraSourceImages []ExtraSourceImage `json:"extra_source_images"`
 	// When true, This request will not use batching. This will allow you to retrieve accurate seeds.
@@ -714,13 +711,13 @@ type GenerationInputKobold struct {
 	// When true and the request requires upfront kudos and the account does not have enough The request
 	// will be downgraded in max context and max tokens so that it does not need upfront kudos.
 	AllowDowngrade OptBool `json:"allow_downgrade"`
-	// Provide a URL where the AI Horde will send a POST call after each delivered generation. The
-	// request will include the details of the job as well as the request ID.
+	// Provide a URL where the AI Horde will send a POST call after each delivered generation. The request
+	// will include the details of the job as well as the request ID.
 	Webhook OptString `json:"webhook"`
 	// A horde style ID or name to use for this generation.
 	Style OptString `json:"style"`
-	// When True, allows very slower workers to pick up this request. Use this when you don't mind
-	// waiting a lot.
+	// When True, allows very slower workers to pick up this request. Use this when you don't mind waiting
+	// a lot.
 	ExtraSlowWorkers OptBool `json:"extra_slow_workers"`
 }
 
@@ -901,18 +898,17 @@ type GenerationInputStable struct {
 	Params OptModelGenerationInputStable `json:"params"`
 	// Set to true if this request is NSFW. This will skip workers which censor images.
 	Nsfw OptBool `json:"nsfw"`
-	// When true, only trusted workers will serve this request. When False, Evaluating workers will also
-	// be used which can increase speed but adds more risk!.
+	// When true, only trusted workers will serve this request. When False, Evaluating workers will also be
+	// used which can increase speed but adds more risk!.
 	TrustedWorkers OptBool `json:"trusted_workers"`
 	// When true, only inference backends that are validated by the AI Horde devs will serve this request.
-	//  When False, non-validated backends will also be used which can increase speed but you may end up
+	// When False, non-validated backends will also be used which can increase speed but you may end up
 	// with unexpected results.
 	ValidatedBackends OptBool `json:"validated_backends"`
-	// When True, allows slower workers to pick up this request. Disabling this incurs an extra kudos
-	// cost.
+	// When True, allows slower workers to pick up this request. Disabling this incurs an extra kudos cost.
 	SlowWorkers OptBool `json:"slow_workers"`
-	// When True, allows very slower workers to pick up this request. Use this when you don't mind
-	// waiting a lot.
+	// When True, allows very slower workers to pick up this request. Use this when you don't mind waiting
+	// a lot.
 	ExtraSlowWorkers OptBool `json:"extra_slow_workers"`
 	// If the request is SFW, and the worker accidentally generates NSFW, it will send back a censored
 	// image.
@@ -926,21 +922,21 @@ type GenerationInputStable struct {
 	// If source_image is provided, specifies how to process it.
 	SourceProcessing OptGenerationInputStableSourceProcessing `json:"source_processing"`
 	// If source_processing is set to 'inpainting' or 'outpainting', this parameter can be optionally
-	// provided as the  Base64-encoded webp mask of the areas to inpaint. If this arg is not passed, the
+	// provided as the Base64-encoded webp mask of the areas to inpaint. If this arg is not passed, the
 	// inpainting/outpainting mask has to be embedded as alpha channel.
 	SourceMask        OptString          `json:"source_mask"`
 	ExtraSourceImages []ExtraSourceImage `json:"extra_source_images"`
 	// If True, the image will be sent via cloudflare r2 download link.
 	R2 OptBool `json:"r2"`
-	// If True, The image will be shared with LAION for improving their dataset. This will also reduce
-	// your kudos consumption by 2. For anonymous users, this is always True.
+	// If True, The image will be shared with LAION for improving their dataset. This will also reduce your
+	// kudos consumption by 2. For anonymous users, this is always True.
 	Shared OptBool `json:"shared"`
 	// If enabled, suspicious prompts are sanitized through a string replacement filter instead.
 	ReplacementFilter OptBool `json:"replacement_filter"`
 	// When true, the endpoint will simply return the cost of the request in kudos and exit.
 	DryRun OptBool `json:"dry_run"`
-	// If using a service account as a proxy, provide this value to identify the actual account from
-	// which this request is coming from.
+	// If using a service account as a proxy, provide this value to identify the actual account from which
+	// this request is coming from.
 	ProxiedAccount OptString `json:"proxied_account"`
 	// When true, This request will not use batching. This will allow you to retrieve accurate seeds.
 	// Feature is restricted to Trusted users and Patreons.
@@ -948,8 +944,8 @@ type GenerationInputStable struct {
 	// When true and the request requires upfront kudos and the account does not have enough The request
 	// will be downgraded in steps and resolution so that it does not need upfront kudos.
 	AllowDowngrade OptBool `json:"allow_downgrade"`
-	// Provide a URL where the AI Horde will send a POST call after each delivered generation. The
-	// request will include the details of the job as well as the request ID.
+	// Provide a URL where the AI Horde will send a POST call after each delivered generation. The request
+	// will include the details of the job as well as the request ID.
 	Webhook OptString `json:"webhook"`
 	// A horde style ID or name to use for this generation.
 	Style OptString `json:"style"`
@@ -1810,9 +1806,9 @@ type GenerationPayloadStable struct {
 	SourceImage OptString `json:"source_image"`
 	// If source_image is provided, specifies how to process it.
 	SourceProcessing OptGenerationPayloadStableSourceProcessing `json:"source_processing"`
-	// If img_processing is set to 'inpainting' or 'outpainting', this parameter can be optionally
-	// provided as the mask of the areas to inpaint. If this arg is not passed, the
-	// inpainting/outpainting mask has to be embedded as alpha channel.
+	// If img_processing is set to 'inpainting' or 'outpainting', this parameter can be optionally provided
+	// as the mask of the areas to inpaint. If this arg is not passed, the inpainting/outpainting mask has
+	// to be embedded as alpha channel.
 	SourceMask        OptString          `json:"source_mask"`
 	ExtraSourceImages []ExtraSourceImage `json:"extra_source_images"`
 	// The r2 upload link to use to upload this image.
@@ -2380,8 +2376,8 @@ func (*HordeDocument) getDocsTermsRes()    {}
 
 // Ref: #/components/schemas/HordeModes
 type HordeModes struct {
-	// When True, this horde will not accept new requests for image generation, but will finish
-	// processing the ones currently in the queue.
+	// When True, this horde will not accept new requests for image generation, but will finish processing
+	// the ones currently in the queue.
 	MaintenanceMode OptBool `json:"maintenance_mode"`
 	// When True, this horde will not only accept worker explicitly invited to join.
 	InviteOnlyMode OptBool `json:"invite_only_mode"`
@@ -2431,11 +2427,11 @@ type HordePerformance struct {
 	WorkerCount OptInt `json:"worker_count"`
 	// How many workers are actively processing prompt generations in this horde in the past 5 minutes.
 	TextWorkerCount OptInt `json:"text_worker_count"`
-	// How many worker threads are actively processing prompt generations in this {horde_noun} in the
-	// past 5 minutes.
+	// How many worker threads are actively processing prompt generations in this {horde_noun} in the past
+	// 5 minutes.
 	ThreadCount OptInt `json:"thread_count"`
-	// How many worker threads are actively processing prompt generations in this {horde_noun} in the
-	// past 5 minutes.
+	// How many worker threads are actively processing prompt generations in this {horde_noun} in the past
+	// 5 minutes.
 	TextThreadCount OptInt `json:"text_thread_count"`
 	// The amount of megapixelsteps in waiting and processing requests currently in this horde.
 	QueuedMegapixelsteps OptFloat64 `json:"queued_megapixelsteps"`
@@ -2446,8 +2442,8 @@ type HordePerformance struct {
 	// How many workers are actively processing image interrogations in this {horde_noun} in the past 5
 	// minutes.
 	InterrogatorCount OptInt `json:"interrogator_count"`
-	// How many worker threads are actively processing image interrogation in this {horde_noun} in the
-	// past 5 minutes.
+	// How many worker threads are actively processing image interrogation in this {horde_noun} in the past
+	// 5 minutes.
 	InterrogatorThreadCount OptInt `json:"interrogator_thread_count"`
 	// The amount of tokens in waiting and processing requests currently in this horde.
 	QueuedTokens OptFloat64 `json:"queued_tokens"`
@@ -3245,14 +3241,14 @@ type ModelGenerationInputKobold struct {
 	// Input formatting option. When enabled, adds a leading space to your input if there is no trailing
 	// whitespace at the end of the previous action.
 	Frmtadsnsp OptBool `json:"frmtadsnsp"`
-	// Output formatting option. When enabled, replaces all occurrences of two or more consecutive
-	// newlines in the output with one newline.
+	// Output formatting option. When enabled, replaces all occurrences of two or more consecutive newlines
+	// in the output with one newline.
 	Frmtrmblln OptBool `json:"frmtrmblln"`
 	// Output formatting option. When enabled, removes #/@%}{+=~|\^<> from the output.
 	Frmtrmspch OptBool `json:"frmtrmspch"`
-	// Output formatting option. When enabled, removes some characters from the end of the output such
-	// that the output doesn't end in the middle of a sentence. If the output is less than one sentence
-	// long, does nothing.
+	// Output formatting option. When enabled, removes some characters from the end of the output such that
+	// the output doesn't end in the middle of a sentence. If the output is less than one sentence long,
+	// does nothing.
 	Frmttriminc OptBool `json:"frmttriminc"`
 	// Base repetition penalty value.
 	RepPen OptFloat64 `json:"rep_pen"`
@@ -4312,11 +4308,10 @@ type ModelInterrogationInputStable struct {
 	Forms []ModelInterrogationFormStable `json:"forms"`
 	// The public URL of the image to interrogate.
 	SourceImage OptString `json:"source_image"`
-	// When True, allows slower workers to pick up this request. Disabling this incurs an extra kudos
-	// cost.
+	// When True, allows slower workers to pick up this request. Disabling this incurs an extra kudos cost.
 	SlowWorkers OptBool `json:"slow_workers"`
-	// Provide a URL where the AI Horde will send a POST call after each delivered generation. The
-	// request will include the details of the job as well as the request ID.
+	// Provide a URL where the AI Horde will send a POST call after each delivered generation. The request
+	// will include the details of the job as well as the request ID.
 	Webhook OptString `json:"webhook"`
 }
 
@@ -4366,14 +4361,14 @@ type ModelPayloadKobold struct {
 	// Input formatting option. When enabled, adds a leading space to your input if there is no trailing
 	// whitespace at the end of the previous action.
 	Frmtadsnsp OptBool `json:"frmtadsnsp"`
-	// Output formatting option. When enabled, replaces all occurrences of two or more consecutive
-	// newlines in the output with one newline.
+	// Output formatting option. When enabled, replaces all occurrences of two or more consecutive newlines
+	// in the output with one newline.
 	Frmtrmblln OptBool `json:"frmtrmblln"`
 	// Output formatting option. When enabled, removes #/@%}{+=~|\^<> from the output.
 	Frmtrmspch OptBool `json:"frmtrmspch"`
-	// Output formatting option. When enabled, removes some characters from the end of the output such
-	// that the output doesn't end in the middle of a sentence. If the output is less than one sentence
-	// long, does nothing.
+	// Output formatting option. When enabled, removes some characters from the end of the output such that
+	// the output doesn't end in the middle of a sentence. If the output is less than one sentence long,
+	// does nothing.
 	Frmttriminc OptBool `json:"frmttriminc"`
 	// Base repetition penalty value.
 	RepPen OptFloat64 `json:"rep_pen"`
@@ -4676,8 +4671,8 @@ type ModelPayloadLorasStable struct {
 	Model OptFloat64 `json:"model"`
 	// The strength of the LoRa to apply to the clip model.
 	Clip OptFloat64 `json:"clip"`
-	// If set, will try to discover a trigger for this LoRa which matches or is similar to this string
-	// and inject it into the prompt. If 'any' is specified it will be pick the first trigger.
+	// If set, will try to discover a trigger for this LoRa which matches or is similar to this string and
+	// inject it into the prompt. If 'any' is specified it will be pick the first trigger.
 	InjectTrigger OptString `json:"inject_trigger"`
 	// If true, will consider the LoRa ID as a CivitAI version ID and search accordingly. Ensure the name
 	// is an integer.
@@ -5392,8 +5387,8 @@ type ModelPayloadTextualInversionsStable struct {
 	// The exact name or CivitAI ID of the Textual Inversion.
 	Name string `json:"name"`
 	// If set, Will automatically add this TI filename to the prompt or negative prompt accordingly using
-	// the provided strength. If this is set to None, then the user will have to manually add the embed
-	// to the prompt themselves.
+	// the provided strength. If this is set to None, then the user will have to manually add the embed to
+	// the prompt themselves.
 	InjectTi OptModelPayloadTextualInversionsStableInjectTi `json:"inject_ti"`
 	// The strength with which to apply the TI to the prompt. Only used when inject_ti is not None.
 	Strength OptFloat64 `json:"strength"`
@@ -5430,8 +5425,8 @@ func (s *ModelPayloadTextualInversionsStable) SetStrength(val OptFloat64) {
 }
 
 // If set, Will automatically add this TI filename to the prompt or negative prompt accordingly using
-// the provided strength. If this is set to None, then the user will have to manually add the embed
-// to the prompt themselves.
+// the provided strength. If this is set to None, then the user will have to manually add the embed to
+// the prompt themselves.
 type ModelPayloadTextualInversionsStableInjectTi string
 
 const (
@@ -5593,14 +5588,14 @@ type ModelStyleInputParamsKobold struct {
 	// Input formatting option. When enabled, adds a leading space to your input if there is no trailing
 	// whitespace at the end of the previous action.
 	Frmtadsnsp OptBool `json:"frmtadsnsp"`
-	// Output formatting option. When enabled, replaces all occurrences of two or more consecutive
-	// newlines in the output with one newline.
+	// Output formatting option. When enabled, replaces all occurrences of two or more consecutive newlines
+	// in the output with one newline.
 	Frmtrmblln OptBool `json:"frmtrmblln"`
 	// Output formatting option. When enabled, removes #/@%}{+=~|\^<> from the output.
 	Frmtrmspch OptBool `json:"frmtrmspch"`
-	// Output formatting option. When enabled, removes some characters from the end of the output such
-	// that the output doesn't end in the middle of a sentence. If the output is less than one sentence
-	// long, does nothing.
+	// Output formatting option. When enabled, removes some characters from the end of the output such that
+	// the output doesn't end in the middle of a sentence. If the output is less than one sentence long,
+	// does nothing.
 	Frmttriminc OptBool `json:"frmttriminc"`
 	// Base repetition penalty value.
 	RepPen OptFloat64 `json:"rep_pen"`
@@ -6709,8 +6704,8 @@ type ModifyUser struct {
 	Concurrency OptInt `json:"concurrency"`
 	// Multiplies the amount of kudos lost when generating images.
 	UsageMultiplier OptFloat64 `json:"usage_multiplier"`
-	// Whether this user has been invited to join a worker to the horde and how many of them. When 0,
-	// this user cannot add (new) workers to the horde.
+	// Whether this user has been invited to join a worker to the horde and how many of them. When 0, this
+	// user cannot add (new) workers to the horde.
 	WorkerInvited OptInt `json:"worker_invited"`
 	// The user's new moderator status.
 	Moderator OptBool `json:"moderator"`
@@ -6993,8 +6988,8 @@ type ModifyUserInput struct {
 	ResetSuspicion OptBool `json:"reset_suspicion"`
 	// (Re)Generate a service account proxy passkey.
 	GenerateProxyPasskey OptBool `json:"generate_proxy_passkey"`
-	// Contact details for the horde admins to reach the user in case of emergency. This is only visible
-	// to horde moderators.
+	// Contact details for the horde admins to reach the user in case of emergency. This is only visible to
+	// horde moderators.
 	Contact OptString `json:"contact"`
 	// Add further information about this user for the other admins.
 	AdminComment OptString `json:"admin_comment"`
@@ -7212,11 +7207,11 @@ func (s *ModifyUserInput) SetAdminComment(val OptString) {
 
 // Ref: #/components/schemas/ModifyWorker
 type ModifyWorker struct {
-	// The new state of the 'maintenance' var for this worker. When True, this worker will not pick up
-	// any new requests.
-	Maintenance OptBool `json:"maintenance"`
-	// The new state of the 'paused' var for this worker. When True, this worker will not be given any
+	// The new state of the 'maintenance' var for this worker. When True, this worker will not pick up any
 	// new requests.
+	Maintenance OptBool `json:"maintenance"`
+	// The new state of the 'paused' var for this worker. When True, this worker will not be given any new
+	// requests.
 	Paused OptBool `json:"paused"`
 	// The new state of the 'info' var for this worker.
 	Info OptString `json:"info"`
@@ -7292,7 +7287,7 @@ type ModifyWorkerInput struct {
 	Info OptString `json:"info"`
 	// When this is set, it will change the worker's name. No profanity allowed!.
 	Name OptString `json:"name"`
-	// The team towards which this worker contributes kudos.  It an empty string ('') is passed, it will
+	// The team towards which this worker contributes kudos. It an empty string ('') is passed, it will
 	// leave the worker without a team. No profanity allowed!.
 	Team OptString `json:"team"`
 }
@@ -7466,8 +7461,8 @@ type NoValidInterrogationsFound struct {
 	// How many waiting requests were skipped because they demanded a trusted worker which this worker is
 	// not.
 	Untrusted OptInt `json:"untrusted"`
-	// How many waiting requests were skipped because they require a higher version of the bridge than
-	// this worker is running (upgrade if you see this in your skipped list).
+	// How many waiting requests were skipped because they require a higher version of the bridge than this
+	// worker is running (upgrade if you see this in your skipped list).
 	BridgeVersion OptInt `json:"bridge_version"`
 }
 
@@ -7517,11 +7512,11 @@ type NoValidRequestFoundKobold struct {
 	// How many waiting requests were skipped because they demanded a trusted worker which this worker is
 	// not.
 	Untrusted OptInt `json:"untrusted"`
-	// How many waiting requests were skipped because they demanded a different model than what this
-	// worker provides.
+	// How many waiting requests were skipped because they demanded a different model than what this worker
+	// provides.
 	Models OptInt `json:"models"`
-	// How many waiting requests were skipped because they require a higher version of the bridge than
-	// this worker is running (upgrade if you see this in your skipped list).
+	// How many waiting requests were skipped because they require a higher version of the bridge than this
+	// worker is running (upgrade if you see this in your skipped list).
 	BridgeVersion OptInt `json:"bridge_version"`
 	// How many waiting requests were skipped because the user didn't have enough kudos when this worker
 	// requires upfront kudos.
@@ -7663,11 +7658,11 @@ type NoValidRequestFoundStable struct {
 	// How many waiting requests were skipped because they demanded a trusted worker which this worker is
 	// not.
 	Untrusted OptInt `json:"untrusted"`
-	// How many waiting requests were skipped because they demanded a different model than what this
-	// worker provides.
+	// How many waiting requests were skipped because they demanded a different model than what this worker
+	// provides.
 	Models OptInt `json:"models"`
-	// How many waiting requests were skipped because they require a higher version of the bridge than
-	// this worker is running (upgrade if you see this in your skipped list).
+	// How many waiting requests were skipped because they require a higher version of the bridge than this
+	// worker is running (upgrade if you see this in your skipped list).
 	BridgeVersion OptInt `json:"bridge_version"`
 	// How many waiting requests were skipped because the user didn't have enough kudos when this worker
 	// requires upfront kudos.
@@ -9184,6 +9179,11 @@ func (o *OptNilExtraSourceImageArray) SetToNull() {
 	o.Value = v
 }
 
+// IsEmpty returns true if the field was omitted from the payload (not Set and not Null).
+func (o OptNilExtraSourceImageArray) IsEmpty() bool {
+	return !o.Set && !o.Null
+}
+
 // Get returns value and boolean that denotes whether value was set.
 func (o OptNilExtraSourceImageArray) Get() (v []ExtraSourceImage, ok bool) {
 	if o.Null {
@@ -9247,6 +9247,11 @@ func (o *OptNilInt) SetToNull() {
 	o.Value = v
 }
 
+// IsEmpty returns true if the field was omitted from the payload (not Set and not Null).
+func (o OptNilInt) IsEmpty() bool {
+	return !o.Set && !o.Null
+}
+
 // Get returns value and boolean that denotes whether value was set.
 func (o OptNilInt) Get() (v int, ok bool) {
 	if o.Null {
@@ -9308,6 +9313,11 @@ func (o *OptNilString) SetToNull() {
 	o.Null = true
 	var v string
 	o.Value = v
+}
+
+// IsEmpty returns true if the field was omitted from the payload (not Set and not Null).
+func (o OptNilString) IsEmpty() bool {
+	return !o.Set && !o.Null
 }
 
 // Get returns value and boolean that denotes whether value was set.
@@ -10594,8 +10604,8 @@ type PopInputKobold struct {
 	RequireUpfrontKudos OptBool `json:"require_upfront_kudos"`
 	// How many jobvs to pop at the same time.
 	Amount OptInt `json:"amount"`
-	// If True, marks the worker as very slow. You should only use this if your mps/s is lower than 0.1.
-	// Extra slow workers are excluded from normal requests but users can opt in to use them.
+	// If True, marks the worker as very slow. You should only use this if your mps/s is lower than
+	// 0.1.Extra slow workers are excluded from normal requests but users can opt in to use them.
 	ExtraSlowWorker OptBool `json:"extra_slow_worker"`
 	// The maximum amount of tokens this worker can generate.
 	MaxLength OptInt `json:"max_length"`
@@ -10743,8 +10753,8 @@ type PopInputStable struct {
 	RequireUpfrontKudos OptBool `json:"require_upfront_kudos"`
 	// How many jobvs to pop at the same time.
 	Amount OptInt `json:"amount"`
-	// If True, marks the worker as very slow. You should only use this if your mps/s is lower than 0.1.
-	// Extra slow workers are excluded from normal requests but users can opt in to use them.
+	// If True, marks the worker as very slow. You should only use this if your mps/s is lower than
+	// 0.1.Extra slow workers are excluded from normal requests but users can opt in to use them.
 	ExtraSlowWorker OptBool `json:"extra_slow_worker"`
 	// The maximum amount of pixels this worker can generate.
 	MaxPixels OptInt   `json:"max_pixels"`
@@ -10764,7 +10774,7 @@ type PopInputStable struct {
 	// If True, this worker will pick up requests requesting LoRas.
 	AllowLora OptBool `json:"allow_lora"`
 	// If True, This worker will not pick up jobs with more steps than the average allowed for that model.
-	//  this is for use by workers which might run into issues doing too many steps.
+	// this is for use by workers which might run into issues doing too many steps.
 	LimitMaxSteps OptBool `json:"limit_max_steps"`
 }
 
@@ -11499,8 +11509,8 @@ func (*RequestAsync) postTextAsyncGenerateRes()  {}
 type RequestError struct {
 	// The error message for this status code.
 	Message OptString `json:"message"`
-	// The return code for this error. See: https://github.
-	// com/Haidra-Org/AI-Horde/blob/main/README_return_codes.md.
+	// The return code for this error. See:
+	// https://github.com/Haidra-Org/AI-Horde/blob/main/README_return_codes.md.
 	Rc RequestErrorRc `json:"rc"`
 }
 
@@ -11550,8 +11560,8 @@ func (*RequestError) postImageStyleExampleRes()         {}
 func (*RequestError) postImageStyleRes()                {}
 func (*RequestError) postTextStyleRes()                 {}
 
-// The return code for this error. See: https://github.
-// com/Haidra-Org/AI-Horde/blob/main/README_return_codes.md.
+// The return code for this error. See:
+// https://github.com/Haidra-Org/AI-Horde/blob/main/README_return_codes.md.
 type RequestErrorRc string
 
 const (
@@ -13265,8 +13275,8 @@ func (*RequestStatusStable) getImageAsyncStatusRes()    {}
 type RequestValidationError struct {
 	// The error message for this status code.
 	Message OptString `json:"message"`
-	// The return code for this error. See: https://github.
-	// com/Haidra-Org/AI-Horde/blob/main/README_return_codes.md.
+	// The return code for this error. See:
+	// https://github.com/Haidra-Org/AI-Horde/blob/main/README_return_codes.md.
 	Rc     RequestValidationErrorRc        `json:"rc"`
 	Errors OptRequestValidationErrorErrors `json:"errors"`
 }
@@ -13327,8 +13337,8 @@ func (s *RequestValidationErrorErrors) init() RequestValidationErrorErrors {
 	return m
 }
 
-// The return code for this error. See: https://github.
-// com/Haidra-Org/AI-Horde/blob/main/README_return_codes.md.
+// The return code for this error. See:
+// https://github.com/Haidra-Org/AI-Horde/blob/main/README_return_codes.md.
 type RequestValidationErrorRc string
 
 const (
@@ -14480,8 +14490,8 @@ type ResponseModelCollection struct {
 	Type OptResponseModelCollectionType `json:"type"`
 	// Extra information about this collection.
 	Info OptString `json:"info"`
-	// When true this collection will be listed among all collection publicly.When false, information
-	// about this collection can only be seen by people who know its ID or name.
+	// When true this collection will be listed among all collection publicly.When false, information about
+	// this collection can only be seen by people who know its ID or name.
 	Public OptBool                    `json:"public"`
 	Styles []ResponseModelStylesShort `json:"styles"`
 	// The amount of times this collection has been used in generations.
@@ -16175,8 +16185,8 @@ type UserDetails struct {
 	Username OptString `json:"username"`
 	// The user unique ID. It is always an integer.
 	ID OptInt `json:"id"`
-	// The amount of Kudos this user has. The amount of Kudos determines the priority when requesting
-	// image generations.
+	// The amount of Kudos this user has. The amount of Kudos determines the priority when requesting image
+	// generations.
 	Kudos OptFloat64 `json:"kudos"`
 	// (Privileged) The amount of Evaluating Kudos this untrusted user has from generations and uptime.
 	// When this number reaches a prespecified threshold, they automatically become trusted.
@@ -16766,8 +16776,8 @@ type WorkerDetails struct {
 	Ipaddr OptString `json:"ipaddr"`
 	// The worker is trusted to return valid generations.
 	Trusted OptBool `json:"trusted"`
-	// The worker's owner has been flagged for suspicious activity. This worker will not be given any
-	// jobs to process.
+	// The worker's owner has been flagged for suspicious activity. This worker will not be given any jobs
+	// to process.
 	Flagged OptBool `json:"flagged"`
 	// (Privileged) How much suspicion this worker has accumulated.
 	Suspicious OptInt `json:"suspicious"`

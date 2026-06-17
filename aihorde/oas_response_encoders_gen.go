@@ -16,7 +16,6 @@ func encodeDeleteFilterSingleResponse(response DeleteFilterSingleRes, w http.Res
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -29,7 +28,6 @@ func encodeDeleteFilterSingleResponse(response DeleteFilterSingleRes, w http.Res
 	case *DeleteFilterSingleBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -42,7 +40,6 @@ func encodeDeleteFilterSingleResponse(response DeleteFilterSingleRes, w http.Res
 	case *DeleteFilterSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -55,7 +52,6 @@ func encodeDeleteFilterSingleResponse(response DeleteFilterSingleRes, w http.Res
 	case *DeleteFilterSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -75,7 +71,6 @@ func encodeDeleteImageAsyncStatusResponse(response DeleteImageAsyncStatusRes, w 
 	case *RequestStatusStable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -88,7 +83,6 @@ func encodeDeleteImageAsyncStatusResponse(response DeleteImageAsyncStatusRes, w 
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -108,7 +102,6 @@ func encodeDeleteInterrogationStatusResponse(response DeleteInterrogationStatusR
 	case *InterrogationStatus:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -121,7 +114,6 @@ func encodeDeleteInterrogationStatusResponse(response DeleteInterrogationStatusR
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -141,7 +133,6 @@ func encodeDeleteOperationsBlockWorkerIPResponse(response DeleteOperationsBlockW
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -154,7 +145,6 @@ func encodeDeleteOperationsBlockWorkerIPResponse(response DeleteOperationsBlockW
 	case *DeleteOperationsBlockWorkerIPBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -167,7 +157,6 @@ func encodeDeleteOperationsBlockWorkerIPResponse(response DeleteOperationsBlockW
 	case *DeleteOperationsBlockWorkerIPUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -180,7 +169,6 @@ func encodeDeleteOperationsBlockWorkerIPResponse(response DeleteOperationsBlockW
 	case *DeleteOperationsBlockWorkerIPForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -200,7 +188,6 @@ func encodeDeleteOperationsIPResponse(response DeleteOperationsIPRes, w http.Res
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -213,7 +200,6 @@ func encodeDeleteOperationsIPResponse(response DeleteOperationsIPRes, w http.Res
 	case *DeleteOperationsIPBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -226,7 +212,6 @@ func encodeDeleteOperationsIPResponse(response DeleteOperationsIPRes, w http.Res
 	case *DeleteOperationsIPUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -239,7 +224,6 @@ func encodeDeleteOperationsIPResponse(response DeleteOperationsIPRes, w http.Res
 	case *DeleteOperationsIPForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -259,7 +243,6 @@ func encodeDeleteSharedKeySingleResponse(response DeleteSharedKeySingleRes, w ht
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -272,7 +255,6 @@ func encodeDeleteSharedKeySingleResponse(response DeleteSharedKeySingleRes, w ht
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -292,7 +274,6 @@ func encodeDeleteSingleCollectionResponse(response DeleteSingleCollectionRes, w 
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -305,7 +286,6 @@ func encodeDeleteSingleCollectionResponse(response DeleteSingleCollectionRes, w 
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -318,7 +298,6 @@ func encodeDeleteSingleCollectionResponse(response DeleteSingleCollectionRes, w 
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -338,7 +317,6 @@ func encodeDeleteSingleImageStyleResponse(response DeleteSingleImageStyleRes, w 
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -351,7 +329,6 @@ func encodeDeleteSingleImageStyleResponse(response DeleteSingleImageStyleRes, w 
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -364,7 +341,6 @@ func encodeDeleteSingleImageStyleResponse(response DeleteSingleImageStyleRes, w 
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -384,7 +360,6 @@ func encodeDeleteSingleImageStyleExampleResponse(response DeleteSingleImageStyle
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -397,7 +372,6 @@ func encodeDeleteSingleImageStyleExampleResponse(response DeleteSingleImageStyle
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -410,7 +384,6 @@ func encodeDeleteSingleImageStyleExampleResponse(response DeleteSingleImageStyle
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -430,7 +403,6 @@ func encodeDeleteSingleTextStyleResponse(response DeleteSingleTextStyleRes, w ht
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -443,7 +415,6 @@ func encodeDeleteSingleTextStyleResponse(response DeleteSingleTextStyleRes, w ht
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -456,7 +427,6 @@ func encodeDeleteSingleTextStyleResponse(response DeleteSingleTextStyleRes, w ht
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -474,7 +444,6 @@ func encodeDeleteSingleTextStyleResponse(response DeleteSingleTextStyleRes, w ht
 func encodeDeleteSingleWorkerMessageResponse(response *SimpleResponse, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -490,7 +459,6 @@ func encodeDeleteTeamSingleResponse(response DeleteTeamSingleRes, w http.Respons
 	case *DeletedTeam:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -503,7 +471,6 @@ func encodeDeleteTeamSingleResponse(response DeleteTeamSingleRes, w http.Respons
 	case *DeleteTeamSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -516,7 +483,6 @@ func encodeDeleteTeamSingleResponse(response DeleteTeamSingleRes, w http.Respons
 	case *DeleteTeamSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -529,7 +495,6 @@ func encodeDeleteTeamSingleResponse(response DeleteTeamSingleRes, w http.Respons
 	case *DeleteTeamSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -549,7 +514,6 @@ func encodeDeleteTextAsyncStatusResponse(response DeleteTextAsyncStatusRes, w ht
 	case *RequestStatusKobold:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -562,7 +526,6 @@ func encodeDeleteTextAsyncStatusResponse(response DeleteTextAsyncStatusRes, w ht
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -582,7 +545,6 @@ func encodeDeleteUserSingleResponse(response DeleteUserSingleRes, w http.Respons
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -595,7 +557,6 @@ func encodeDeleteUserSingleResponse(response DeleteUserSingleRes, w http.Respons
 	case *DeleteUserSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -608,7 +569,6 @@ func encodeDeleteUserSingleResponse(response DeleteUserSingleRes, w http.Respons
 	case *DeleteUserSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -621,7 +581,6 @@ func encodeDeleteUserSingleResponse(response DeleteUserSingleRes, w http.Respons
 	case *DeleteUserSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -641,7 +600,6 @@ func encodeDeleteWorkerSingleResponse(response DeleteWorkerSingleRes, w http.Res
 	case *DeletedWorker:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -654,7 +612,6 @@ func encodeDeleteWorkerSingleResponse(response DeleteWorkerSingleRes, w http.Res
 	case *DeleteWorkerSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -667,7 +624,6 @@ func encodeDeleteWorkerSingleResponse(response DeleteWorkerSingleRes, w http.Res
 	case *DeleteWorkerSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -680,7 +636,6 @@ func encodeDeleteWorkerSingleResponse(response DeleteWorkerSingleRes, w http.Res
 	case *DeleteWorkerSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -698,7 +653,6 @@ func encodeDeleteWorkerSingleResponse(response DeleteWorkerSingleRes, w http.Res
 func encodeGetCollectionResponse(response []ResponseModelCollection, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	e.ArrStart()
@@ -718,7 +672,6 @@ func encodeGetDocsPrivacyResponse(response GetDocsPrivacyRes, w http.ResponseWri
 	case *HordeDocument:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -731,7 +684,6 @@ func encodeGetDocsPrivacyResponse(response GetDocsPrivacyRes, w http.ResponseWri
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -751,7 +703,6 @@ func encodeGetDocsSponsorsResponse(response GetDocsSponsorsRes, w http.ResponseW
 	case *HordeDocument:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -764,7 +715,6 @@ func encodeGetDocsSponsorsResponse(response GetDocsSponsorsRes, w http.ResponseW
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -784,7 +734,6 @@ func encodeGetDocsTermsResponse(response GetDocsTermsRes, w http.ResponseWriter,
 	case *HordeDocument:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -797,7 +746,6 @@ func encodeGetDocsTermsResponse(response GetDocsTermsRes, w http.ResponseWriter,
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -817,7 +765,6 @@ func encodeGetFilterRegexResponse(response GetFilterRegexRes, w http.ResponseWri
 	case *GetFilterRegexOKApplicationJSON:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -830,7 +777,6 @@ func encodeGetFilterRegexResponse(response GetFilterRegexRes, w http.ResponseWri
 	case *GetFilterRegexBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -843,7 +789,6 @@ func encodeGetFilterRegexResponse(response GetFilterRegexRes, w http.ResponseWri
 	case *GetFilterRegexUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -856,7 +801,6 @@ func encodeGetFilterRegexResponse(response GetFilterRegexRes, w http.ResponseWri
 	case *GetFilterRegexForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -876,7 +820,6 @@ func encodeGetFilterSingleResponse(response GetFilterSingleRes, w http.ResponseW
 	case *GetFilterSingleOKApplicationJSON:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -889,7 +832,6 @@ func encodeGetFilterSingleResponse(response GetFilterSingleRes, w http.ResponseW
 	case *GetFilterSingleBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -902,7 +844,6 @@ func encodeGetFilterSingleResponse(response GetFilterSingleRes, w http.ResponseW
 	case *GetFilterSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -915,7 +856,6 @@ func encodeGetFilterSingleResponse(response GetFilterSingleRes, w http.ResponseW
 	case *GetFilterSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -935,7 +875,6 @@ func encodeGetFiltersResponse(response GetFiltersRes, w http.ResponseWriter, spa
 	case *GetFiltersOKApplicationJSON:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -948,7 +887,6 @@ func encodeGetFiltersResponse(response GetFiltersRes, w http.ResponseWriter, spa
 	case *GetFiltersBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -961,7 +899,6 @@ func encodeGetFiltersResponse(response GetFiltersRes, w http.ResponseWriter, spa
 	case *GetFiltersUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -974,7 +911,6 @@ func encodeGetFiltersResponse(response GetFiltersRes, w http.ResponseWriter, spa
 	case *GetFiltersForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -994,7 +930,6 @@ func encodeGetFindUserResponse(response GetFindUserRes, w http.ResponseWriter, s
 	case *UserDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1007,7 +942,6 @@ func encodeGetFindUserResponse(response GetFindUserRes, w http.ResponseWriter, s
 	case *GetFindUserBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1020,7 +954,6 @@ func encodeGetFindUserResponse(response GetFindUserRes, w http.ResponseWriter, s
 	case *GetFindUserNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1037,7 +970,6 @@ func encodeGetFindUserResponse(response GetFindUserRes, w http.ResponseWriter, s
 
 func encodeGetHeartbeatResponse(response *GetHeartbeatOK, w http.ResponseWriter, span trace.Span) error {
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	return nil
 }
@@ -1045,7 +977,6 @@ func encodeGetHeartbeatResponse(response *GetHeartbeatOK, w http.ResponseWriter,
 func encodeGetHordeLoadResponse(response *HordePerformance, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1059,7 +990,6 @@ func encodeGetHordeLoadResponse(response *HordePerformance, w http.ResponseWrite
 func encodeGetHordeModesResponse(response *HordeModes, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1073,7 +1003,6 @@ func encodeGetHordeModesResponse(response *HordeModes, w http.ResponseWriter, sp
 func encodeGetHordeNewsResponse(response []Newspiece, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	e.ArrStart()
@@ -1093,7 +1022,6 @@ func encodeGetImageAsyncCheckResponse(response GetImageAsyncCheckRes, w http.Res
 	case *RequestStatusCheck:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1106,7 +1034,6 @@ func encodeGetImageAsyncCheckResponse(response GetImageAsyncCheckRes, w http.Res
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1126,7 +1053,6 @@ func encodeGetImageAsyncStatusResponse(response GetImageAsyncStatusRes, w http.R
 	case *RequestStatusStable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1139,7 +1065,6 @@ func encodeGetImageAsyncStatusResponse(response GetImageAsyncStatusRes, w http.R
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1159,7 +1084,6 @@ func encodeGetImageHordeStatsModelsResponse(response GetImageHordeStatsModelsRes
 	case *ImgModelStats:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1172,7 +1096,6 @@ func encodeGetImageHordeStatsModelsResponse(response GetImageHordeStatsModelsRes
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1190,7 +1113,6 @@ func encodeGetImageHordeStatsModelsResponse(response GetImageHordeStatsModelsRes
 func encodeGetImageHordeStatsTotalsResponse(response *StatsImgTotals, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1204,7 +1126,6 @@ func encodeGetImageHordeStatsTotalsResponse(response *StatsImgTotals, w http.Res
 func encodeGetImageStyleResponse(response []StyleStable, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	e.ArrStart()
@@ -1224,7 +1145,6 @@ func encodeGetInterrogationStatusResponse(response GetInterrogationStatusRes, w 
 	case *InterrogationStatus:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1237,7 +1157,6 @@ func encodeGetInterrogationStatusResponse(response GetInterrogationStatusRes, w 
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1255,7 +1174,6 @@ func encodeGetInterrogationStatusResponse(response GetInterrogationStatusRes, w 
 func encodeGetModelSingleResponse(response []ActiveModel, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	e.ArrStart()
@@ -1275,7 +1193,6 @@ func encodeGetModelsResponse(response GetModelsRes, w http.ResponseWriter, span 
 	case *GetModelsOKApplicationJSON:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1288,7 +1205,6 @@ func encodeGetModelsResponse(response GetModelsRes, w http.ResponseWriter, span 
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1308,7 +1224,6 @@ func encodeGetOperationsIPResponse(response GetOperationsIPRes, w http.ResponseW
 	case *GetOperationsIPOKApplicationJSON:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1321,7 +1236,6 @@ func encodeGetOperationsIPResponse(response GetOperationsIPRes, w http.ResponseW
 	case *GetOperationsIPBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1334,7 +1248,6 @@ func encodeGetOperationsIPResponse(response GetOperationsIPRes, w http.ResponseW
 	case *GetOperationsIPUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1347,7 +1260,6 @@ func encodeGetOperationsIPResponse(response GetOperationsIPRes, w http.ResponseW
 	case *GetOperationsIPForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1367,7 +1279,6 @@ func encodeGetOperationsIPSingleResponse(response GetOperationsIPSingleRes, w ht
 	case *GetOperationsIPSingleOKApplicationJSON:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1380,7 +1291,6 @@ func encodeGetOperationsIPSingleResponse(response GetOperationsIPSingleRes, w ht
 	case *GetOperationsIPSingleBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1393,7 +1303,6 @@ func encodeGetOperationsIPSingleResponse(response GetOperationsIPSingleRes, w ht
 	case *GetOperationsIPSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1406,7 +1315,6 @@ func encodeGetOperationsIPSingleResponse(response GetOperationsIPSingleRes, w ht
 	case *GetOperationsIPSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1426,7 +1334,6 @@ func encodeGetSharedKeySingleResponse(response GetSharedKeySingleRes, w http.Res
 	case *SharedKeyDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1439,7 +1346,6 @@ func encodeGetSharedKeySingleResponse(response GetSharedKeySingleRes, w http.Res
 	case *GetSharedKeySingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1452,7 +1358,6 @@ func encodeGetSharedKeySingleResponse(response GetSharedKeySingleRes, w http.Res
 	case *GetSharedKeySingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1470,7 +1375,6 @@ func encodeGetSharedKeySingleResponse(response GetSharedKeySingleRes, w http.Res
 func encodeGetSingleCollectionResponse(response *ResponseModelCollection, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1484,7 +1388,6 @@ func encodeGetSingleCollectionResponse(response *ResponseModelCollection, w http
 func encodeGetSingleCollectionByNameResponse(response *ResponseModelCollection, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1498,7 +1401,6 @@ func encodeGetSingleCollectionByNameResponse(response *ResponseModelCollection, 
 func encodeGetSingleImageStyleResponse(response *StyleStable, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1512,7 +1414,6 @@ func encodeGetSingleImageStyleResponse(response *StyleStable, w http.ResponseWri
 func encodeGetSingleImageStyleByNameResponse(response *StyleStable, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1526,7 +1427,6 @@ func encodeGetSingleImageStyleByNameResponse(response *StyleStable, w http.Respo
 func encodeGetSingleTextStyleResponse(response *StyleKobold, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1540,7 +1440,6 @@ func encodeGetSingleTextStyleResponse(response *StyleKobold, w http.ResponseWrit
 func encodeGetSingleTextStyleByNameResponse(response *StyleKobold, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1554,7 +1453,6 @@ func encodeGetSingleTextStyleByNameResponse(response *StyleKobold, w http.Respon
 func encodeGetSingleWorkerMessageResponse(response *ResponseModelMessage, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1570,7 +1468,6 @@ func encodeGetTeamSingleResponse(response GetTeamSingleRes, w http.ResponseWrite
 	case *TeamDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1583,7 +1480,6 @@ func encodeGetTeamSingleResponse(response GetTeamSingleRes, w http.ResponseWrite
 	case *GetTeamSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1596,7 +1492,6 @@ func encodeGetTeamSingleResponse(response GetTeamSingleRes, w http.ResponseWrite
 	case *GetTeamSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1609,7 +1504,6 @@ func encodeGetTeamSingleResponse(response GetTeamSingleRes, w http.ResponseWrite
 	case *GetTeamSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1627,7 +1521,6 @@ func encodeGetTeamSingleResponse(response GetTeamSingleRes, w http.ResponseWrite
 func encodeGetTeamsResponse(response []TeamDetails, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	e.ArrStart()
@@ -1647,7 +1540,6 @@ func encodeGetTextAsyncStatusResponse(response GetTextAsyncStatusRes, w http.Res
 	case *RequestStatusKobold:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1660,7 +1552,6 @@ func encodeGetTextAsyncStatusResponse(response GetTextAsyncStatusRes, w http.Res
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1678,7 +1569,6 @@ func encodeGetTextAsyncStatusResponse(response GetTextAsyncStatusRes, w http.Res
 func encodeGetTextHordeStatsModelsResponse(response *TxtModelStats, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1692,7 +1582,6 @@ func encodeGetTextHordeStatsModelsResponse(response *TxtModelStats, w http.Respo
 func encodeGetTextHordeStatsTotalsResponse(response *StatsTxtTotals, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1706,7 +1595,6 @@ func encodeGetTextHordeStatsTotalsResponse(response *StatsTxtTotals, w http.Resp
 func encodeGetTextStyleResponse(response []StyleKobold, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	e.ArrStart()
@@ -1726,7 +1614,6 @@ func encodeGetUserSingleResponse(response GetUserSingleRes, w http.ResponseWrite
 	case *UserDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1739,7 +1626,6 @@ func encodeGetUserSingleResponse(response GetUserSingleRes, w http.ResponseWrite
 	case *GetUserSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1752,7 +1638,6 @@ func encodeGetUserSingleResponse(response GetUserSingleRes, w http.ResponseWrite
 	case *GetUserSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1770,7 +1655,6 @@ func encodeGetUserSingleResponse(response GetUserSingleRes, w http.ResponseWrite
 func encodeGetUsersResponse(response *UserDetails, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	response.Encode(e)
@@ -1786,7 +1670,6 @@ func encodeGetWorkerMessagesResponse(response GetWorkerMessagesRes, w http.Respo
 	case *GetWorkerMessagesOKApplicationJSON:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1799,7 +1682,6 @@ func encodeGetWorkerMessagesResponse(response GetWorkerMessagesRes, w http.Respo
 	case *GetWorkerMessagesUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1812,7 +1694,6 @@ func encodeGetWorkerMessagesResponse(response GetWorkerMessagesRes, w http.Respo
 	case *GetWorkerMessagesForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1825,7 +1706,6 @@ func encodeGetWorkerMessagesResponse(response GetWorkerMessagesRes, w http.Respo
 	case *GetWorkerMessagesNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1845,7 +1725,6 @@ func encodeGetWorkerSingleResponse(response GetWorkerSingleRes, w http.ResponseW
 	case *WorkerDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1858,7 +1737,6 @@ func encodeGetWorkerSingleResponse(response GetWorkerSingleRes, w http.ResponseW
 	case *GetWorkerSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1871,7 +1749,6 @@ func encodeGetWorkerSingleResponse(response GetWorkerSingleRes, w http.ResponseW
 	case *GetWorkerSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1884,7 +1761,6 @@ func encodeGetWorkerSingleResponse(response GetWorkerSingleRes, w http.ResponseW
 	case *GetWorkerSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1904,7 +1780,6 @@ func encodeGetWorkerSingleNameResponse(response GetWorkerSingleNameRes, w http.R
 	case *WorkerDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1917,7 +1792,6 @@ func encodeGetWorkerSingleNameResponse(response GetWorkerSingleNameRes, w http.R
 	case *GetWorkerSingleNameUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1930,7 +1804,6 @@ func encodeGetWorkerSingleNameResponse(response GetWorkerSingleNameRes, w http.R
 	case *GetWorkerSingleNameForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1943,7 +1816,6 @@ func encodeGetWorkerSingleNameResponse(response GetWorkerSingleNameRes, w http.R
 	case *GetWorkerSingleNameNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1961,7 +1833,6 @@ func encodeGetWorkerSingleNameResponse(response GetWorkerSingleNameRes, w http.R
 func encodeGetWorkersResponse(response []WorkerDetails, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	e := new(jx.Encoder)
 	e.ArrStart()
@@ -1981,7 +1852,6 @@ func encodePatchFilterSingleResponse(response PatchFilterSingleRes, w http.Respo
 	case *FilterDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -1994,7 +1864,6 @@ func encodePatchFilterSingleResponse(response PatchFilterSingleRes, w http.Respo
 	case *PatchFilterSingleBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2007,7 +1876,6 @@ func encodePatchFilterSingleResponse(response PatchFilterSingleRes, w http.Respo
 	case *PatchFilterSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2020,7 +1888,6 @@ func encodePatchFilterSingleResponse(response PatchFilterSingleRes, w http.Respo
 	case *PatchFilterSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2040,7 +1907,6 @@ func encodePatchSharedKeySingleResponse(response PatchSharedKeySingleRes, w http
 	case *SharedKeyDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2053,7 +1919,6 @@ func encodePatchSharedKeySingleResponse(response PatchSharedKeySingleRes, w http
 	case *PatchSharedKeySingleBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2066,7 +1931,6 @@ func encodePatchSharedKeySingleResponse(response PatchSharedKeySingleRes, w http
 	case *PatchSharedKeySingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2079,7 +1943,6 @@ func encodePatchSharedKeySingleResponse(response PatchSharedKeySingleRes, w http
 	case *PatchSharedKeySingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2092,7 +1955,6 @@ func encodePatchSharedKeySingleResponse(response PatchSharedKeySingleRes, w http
 	case *PatchSharedKeySingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2112,7 +1974,6 @@ func encodePatchSingleCollectionResponse(response PatchSingleCollectionRes, w ht
 	case *StyleModify:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2125,7 +1986,6 @@ func encodePatchSingleCollectionResponse(response PatchSingleCollectionRes, w ht
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2138,7 +1998,6 @@ func encodePatchSingleCollectionResponse(response PatchSingleCollectionRes, w ht
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2158,7 +2017,6 @@ func encodePatchSingleImageStyleResponse(response PatchSingleImageStyleRes, w ht
 	case *StyleModify:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2171,7 +2029,6 @@ func encodePatchSingleImageStyleResponse(response PatchSingleImageStyleRes, w ht
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2184,7 +2041,6 @@ func encodePatchSingleImageStyleResponse(response PatchSingleImageStyleRes, w ht
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2204,7 +2060,6 @@ func encodePatchSingleImageStyleExampleResponse(response PatchSingleImageStyleEx
 	case *StyleModify:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2217,7 +2072,6 @@ func encodePatchSingleImageStyleExampleResponse(response PatchSingleImageStyleEx
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2230,7 +2084,6 @@ func encodePatchSingleImageStyleExampleResponse(response PatchSingleImageStyleEx
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2250,7 +2103,6 @@ func encodePatchSingleTextStyleResponse(response PatchSingleTextStyleRes, w http
 	case *StyleModify:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2263,7 +2115,6 @@ func encodePatchSingleTextStyleResponse(response PatchSingleTextStyleRes, w http
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2276,7 +2127,6 @@ func encodePatchSingleTextStyleResponse(response PatchSingleTextStyleRes, w http
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2296,7 +2146,6 @@ func encodePatchTeamSingleResponse(response PatchTeamSingleRes, w http.ResponseW
 	case *ModifyTeam:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2309,7 +2158,6 @@ func encodePatchTeamSingleResponse(response PatchTeamSingleRes, w http.ResponseW
 	case *PatchTeamSingleBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2322,7 +2170,6 @@ func encodePatchTeamSingleResponse(response PatchTeamSingleRes, w http.ResponseW
 	case *PatchTeamSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2335,7 +2182,6 @@ func encodePatchTeamSingleResponse(response PatchTeamSingleRes, w http.ResponseW
 	case *PatchTeamSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2348,7 +2194,6 @@ func encodePatchTeamSingleResponse(response PatchTeamSingleRes, w http.ResponseW
 	case *PatchTeamSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2368,7 +2213,6 @@ func encodePostAestheticsResponse(response PostAestheticsRes, w http.ResponseWri
 	case *GenerationSubmitted:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2381,7 +2225,6 @@ func encodePostAestheticsResponse(response PostAestheticsRes, w http.ResponseWri
 	case *PostAestheticsBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2394,7 +2237,6 @@ func encodePostAestheticsResponse(response PostAestheticsRes, w http.ResponseWri
 	case *PostAestheticsUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2407,7 +2249,6 @@ func encodePostAestheticsResponse(response PostAestheticsRes, w http.ResponseWri
 	case *PostAestheticsNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2427,7 +2268,6 @@ func encodePostAwardKudosResponse(response PostAwardKudosRes, w http.ResponseWri
 	case *KudosAwarded:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2440,7 +2280,6 @@ func encodePostAwardKudosResponse(response PostAwardKudosRes, w http.ResponseWri
 	case *PostAwardKudosBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2453,7 +2292,6 @@ func encodePostAwardKudosResponse(response PostAwardKudosRes, w http.ResponseWri
 	case *PostAwardKudosUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2466,7 +2304,6 @@ func encodePostAwardKudosResponse(response PostAwardKudosRes, w http.ResponseWri
 	case *PostAwardKudosForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2486,7 +2323,6 @@ func encodePostCollectionResponse(response PostCollectionRes, w http.ResponseWri
 	case *StyleModify:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2499,7 +2335,6 @@ func encodePostCollectionResponse(response PostCollectionRes, w http.ResponseWri
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2512,7 +2347,6 @@ func encodePostCollectionResponse(response PostCollectionRes, w http.ResponseWri
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2532,7 +2366,6 @@ func encodePostFiltersResponse(response PostFiltersRes, w http.ResponseWriter, s
 	case *FilterPromptSuspicion:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2545,7 +2378,6 @@ func encodePostFiltersResponse(response PostFiltersRes, w http.ResponseWriter, s
 	case *PostFiltersBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2558,7 +2390,6 @@ func encodePostFiltersResponse(response PostFiltersRes, w http.ResponseWriter, s
 	case *PostFiltersUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2571,7 +2402,6 @@ func encodePostFiltersResponse(response PostFiltersRes, w http.ResponseWriter, s
 	case *PostFiltersForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2591,7 +2421,6 @@ func encodePostImageAsyncGenerateResponse(response PostImageAsyncGenerateRes, w 
 	case *RequestAsync:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(202)
-		span.SetStatus(codes.Ok, http.StatusText(202))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2604,7 +2433,6 @@ func encodePostImageAsyncGenerateResponse(response PostImageAsyncGenerateRes, w 
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2617,7 +2445,6 @@ func encodePostImageAsyncGenerateResponse(response PostImageAsyncGenerateRes, w 
 	case *PostImageAsyncGenerateUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2630,7 +2457,6 @@ func encodePostImageAsyncGenerateResponse(response PostImageAsyncGenerateRes, w 
 	case *PostImageAsyncGenerateTooManyRequests:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(429)
-		span.SetStatus(codes.Error, http.StatusText(429))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2663,7 +2489,6 @@ func encodePostImageJobPopResponse(response PostImageJobPopRes, w http.ResponseW
 	case *GenerationPayloadStable:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2676,7 +2501,6 @@ func encodePostImageJobPopResponse(response PostImageJobPopRes, w http.ResponseW
 	case *PostImageJobPopBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2689,7 +2513,6 @@ func encodePostImageJobPopResponse(response PostImageJobPopRes, w http.ResponseW
 	case *PostImageJobPopUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2702,7 +2525,6 @@ func encodePostImageJobPopResponse(response PostImageJobPopRes, w http.ResponseW
 	case *PostImageJobPopForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2722,7 +2544,6 @@ func encodePostImageJobSubmitResponse(response PostImageJobSubmitRes, w http.Res
 	case *GenerationSubmitted:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2735,7 +2556,6 @@ func encodePostImageJobSubmitResponse(response PostImageJobSubmitRes, w http.Res
 	case *PostImageJobSubmitBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2748,7 +2568,6 @@ func encodePostImageJobSubmitResponse(response PostImageJobSubmitRes, w http.Res
 	case *PostImageJobSubmitUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2761,7 +2580,6 @@ func encodePostImageJobSubmitResponse(response PostImageJobSubmitRes, w http.Res
 	case *PostImageJobSubmitForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2774,7 +2592,6 @@ func encodePostImageJobSubmitResponse(response PostImageJobSubmitRes, w http.Res
 	case *PostImageJobSubmitNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2794,7 +2611,6 @@ func encodePostImageStyleResponse(response PostImageStyleRes, w http.ResponseWri
 	case *StyleModify:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2807,7 +2623,6 @@ func encodePostImageStyleResponse(response PostImageStyleRes, w http.ResponseWri
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2820,7 +2635,6 @@ func encodePostImageStyleResponse(response PostImageStyleRes, w http.ResponseWri
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2840,7 +2654,6 @@ func encodePostImageStyleExampleResponse(response PostImageStyleExampleRes, w ht
 	case *StyleModify:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2853,7 +2666,6 @@ func encodePostImageStyleExampleResponse(response PostImageStyleExampleRes, w ht
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2866,7 +2678,6 @@ func encodePostImageStyleExampleResponse(response PostImageStyleExampleRes, w ht
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2886,7 +2697,6 @@ func encodePostInterrogateResponse(response PostInterrogateRes, w http.ResponseW
 	case *RequestInterrogationResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(202)
-		span.SetStatus(codes.Ok, http.StatusText(202))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2899,7 +2709,6 @@ func encodePostInterrogateResponse(response PostInterrogateRes, w http.ResponseW
 	case *PostInterrogateBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2912,7 +2721,6 @@ func encodePostInterrogateResponse(response PostInterrogateRes, w http.ResponseW
 	case *PostInterrogateUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2925,7 +2733,6 @@ func encodePostInterrogateResponse(response PostInterrogateRes, w http.ResponseW
 	case *PostInterrogateTooManyRequests:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(429)
-		span.SetStatus(codes.Error, http.StatusText(429))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2958,7 +2765,6 @@ func encodePostInterrogatePopResponse(response PostInterrogatePopRes, w http.Res
 	case *InterrogationPopPayload:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2971,7 +2777,6 @@ func encodePostInterrogatePopResponse(response PostInterrogatePopRes, w http.Res
 	case *PostInterrogatePopBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2984,7 +2789,6 @@ func encodePostInterrogatePopResponse(response PostInterrogatePopRes, w http.Res
 	case *PostInterrogatePopUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -2997,7 +2801,6 @@ func encodePostInterrogatePopResponse(response PostInterrogatePopRes, w http.Res
 	case *PostInterrogatePopForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3017,7 +2820,6 @@ func encodePostInterrogateSubmitResponse(response PostInterrogateSubmitRes, w ht
 	case *GenerationSubmitted:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3030,7 +2832,6 @@ func encodePostInterrogateSubmitResponse(response PostInterrogateSubmitRes, w ht
 	case *PostInterrogateSubmitBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3043,7 +2844,6 @@ func encodePostInterrogateSubmitResponse(response PostInterrogateSubmitRes, w ht
 	case *PostInterrogateSubmitUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3056,7 +2856,6 @@ func encodePostInterrogateSubmitResponse(response PostInterrogateSubmitRes, w ht
 	case *PostInterrogateSubmitForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3069,7 +2868,6 @@ func encodePostInterrogateSubmitResponse(response PostInterrogateSubmitRes, w ht
 	case *PostInterrogateSubmitNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3089,7 +2887,6 @@ func encodePostOperationsIPResponse(response PostOperationsIPRes, w http.Respons
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3102,7 +2899,6 @@ func encodePostOperationsIPResponse(response PostOperationsIPRes, w http.Respons
 	case *PostOperationsIPBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3115,7 +2911,6 @@ func encodePostOperationsIPResponse(response PostOperationsIPRes, w http.Respons
 	case *PostOperationsIPUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3128,7 +2923,6 @@ func encodePostOperationsIPResponse(response PostOperationsIPRes, w http.Respons
 	case *PostOperationsIPForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3148,7 +2942,6 @@ func encodePostTeamsResponse(response PostTeamsRes, w http.ResponseWriter, span 
 	case *ModifyTeam:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3161,7 +2954,6 @@ func encodePostTeamsResponse(response PostTeamsRes, w http.ResponseWriter, span 
 	case *PostTeamsBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3174,7 +2966,6 @@ func encodePostTeamsResponse(response PostTeamsRes, w http.ResponseWriter, span 
 	case *PostTeamsUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3187,7 +2978,6 @@ func encodePostTeamsResponse(response PostTeamsRes, w http.ResponseWriter, span 
 	case *PostTeamsForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3207,7 +2997,6 @@ func encodePostTextAsyncGenerateResponse(response PostTextAsyncGenerateRes, w ht
 	case *RequestAsync:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(202)
-		span.SetStatus(codes.Ok, http.StatusText(202))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3220,7 +3009,6 @@ func encodePostTextAsyncGenerateResponse(response PostTextAsyncGenerateRes, w ht
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3233,7 +3021,6 @@ func encodePostTextAsyncGenerateResponse(response PostTextAsyncGenerateRes, w ht
 	case *PostTextAsyncGenerateUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3246,7 +3033,6 @@ func encodePostTextAsyncGenerateResponse(response PostTextAsyncGenerateRes, w ht
 	case *PostTextAsyncGenerateTooManyRequests:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(429)
-		span.SetStatus(codes.Error, http.StatusText(429))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3279,7 +3065,6 @@ func encodePostTextJobPopResponse(response PostTextJobPopRes, w http.ResponseWri
 	case *GenerationPayloadKobold:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3292,7 +3077,6 @@ func encodePostTextJobPopResponse(response PostTextJobPopRes, w http.ResponseWri
 	case *PostTextJobPopBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3305,7 +3089,6 @@ func encodePostTextJobPopResponse(response PostTextJobPopRes, w http.ResponseWri
 	case *PostTextJobPopUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3318,7 +3101,6 @@ func encodePostTextJobPopResponse(response PostTextJobPopRes, w http.ResponseWri
 	case *PostTextJobPopForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3338,7 +3120,6 @@ func encodePostTextJobSubmitResponse(response PostTextJobSubmitRes, w http.Respo
 	case *GenerationSubmitted:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3351,7 +3132,6 @@ func encodePostTextJobSubmitResponse(response PostTextJobSubmitRes, w http.Respo
 	case *PostTextJobSubmitBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3364,7 +3144,6 @@ func encodePostTextJobSubmitResponse(response PostTextJobSubmitRes, w http.Respo
 	case *PostTextJobSubmitUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3377,7 +3156,6 @@ func encodePostTextJobSubmitResponse(response PostTextJobSubmitRes, w http.Respo
 	case *PostTextJobSubmitForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3390,7 +3168,6 @@ func encodePostTextJobSubmitResponse(response PostTextJobSubmitRes, w http.Respo
 	case *PostTextJobSubmitNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3410,7 +3187,6 @@ func encodePostTextStyleResponse(response PostTextStyleRes, w http.ResponseWrite
 	case *StyleModify:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3423,7 +3199,6 @@ func encodePostTextStyleResponse(response PostTextStyleRes, w http.ResponseWrite
 	case *RequestValidationError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3436,7 +3211,6 @@ func encodePostTextStyleResponse(response PostTextStyleRes, w http.ResponseWrite
 	case *RequestError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3456,7 +3230,6 @@ func encodePostTransferKudosResponse(response PostTransferKudosRes, w http.Respo
 	case *KudosTransferred:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3469,7 +3242,6 @@ func encodePostTransferKudosResponse(response PostTransferKudosRes, w http.Respo
 	case *PostTransferKudosBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3482,7 +3254,6 @@ func encodePostTransferKudosResponse(response PostTransferKudosRes, w http.Respo
 	case *PostTransferKudosUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3502,7 +3273,6 @@ func encodePostWorkerMessagesResponse(response PostWorkerMessagesRes, w http.Res
 	case *ResponseModelMessage:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3515,7 +3285,6 @@ func encodePostWorkerMessagesResponse(response PostWorkerMessagesRes, w http.Res
 	case *PostWorkerMessagesUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3528,7 +3297,6 @@ func encodePostWorkerMessagesResponse(response PostWorkerMessagesRes, w http.Res
 	case *PostWorkerMessagesForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3541,7 +3309,6 @@ func encodePostWorkerMessagesResponse(response PostWorkerMessagesRes, w http.Res
 	case *PostWorkerMessagesNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3561,7 +3328,6 @@ func encodePutFiltersResponse(response PutFiltersRes, w http.ResponseWriter, spa
 	case *FilterDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(201)
-		span.SetStatus(codes.Ok, http.StatusText(201))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3574,7 +3340,6 @@ func encodePutFiltersResponse(response PutFiltersRes, w http.ResponseWriter, spa
 	case *PutFiltersBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3587,7 +3352,6 @@ func encodePutFiltersResponse(response PutFiltersRes, w http.ResponseWriter, spa
 	case *PutFiltersUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3600,7 +3364,6 @@ func encodePutFiltersResponse(response PutFiltersRes, w http.ResponseWriter, spa
 	case *PutFiltersForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3620,7 +3383,6 @@ func encodePutHordeModesResponse(response PutHordeModesRes, w http.ResponseWrite
 	case *HordeModes:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3633,7 +3395,6 @@ func encodePutHordeModesResponse(response PutHordeModesRes, w http.ResponseWrite
 	case *PutHordeModesUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3646,7 +3407,6 @@ func encodePutHordeModesResponse(response PutHordeModesRes, w http.ResponseWrite
 	case *PutHordeModesForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3666,7 +3426,6 @@ func encodePutOperationsBlockWorkerIPResponse(response PutOperationsBlockWorkerI
 	case *SimpleResponse:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3679,7 +3438,6 @@ func encodePutOperationsBlockWorkerIPResponse(response PutOperationsBlockWorkerI
 	case *PutOperationsBlockWorkerIPBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3692,7 +3450,6 @@ func encodePutOperationsBlockWorkerIPResponse(response PutOperationsBlockWorkerI
 	case *PutOperationsBlockWorkerIPUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3705,7 +3462,6 @@ func encodePutOperationsBlockWorkerIPResponse(response PutOperationsBlockWorkerI
 	case *PutOperationsBlockWorkerIPForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3725,7 +3481,6 @@ func encodePutSharedKeyResponse(response PutSharedKeyRes, w http.ResponseWriter,
 	case *SharedKeyDetails:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3738,7 +3493,6 @@ func encodePutSharedKeyResponse(response PutSharedKeyRes, w http.ResponseWriter,
 	case *PutSharedKeyBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3751,7 +3505,6 @@ func encodePutSharedKeyResponse(response PutSharedKeyRes, w http.ResponseWriter,
 	case *PutSharedKeyUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3764,7 +3517,6 @@ func encodePutSharedKeyResponse(response PutSharedKeyRes, w http.ResponseWriter,
 	case *PutSharedKeyForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3777,7 +3529,6 @@ func encodePutSharedKeyResponse(response PutSharedKeyRes, w http.ResponseWriter,
 	case *PutSharedKeyNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3797,7 +3548,6 @@ func encodePutUserSingleResponse(response PutUserSingleRes, w http.ResponseWrite
 	case *ModifyUser:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3810,7 +3560,6 @@ func encodePutUserSingleResponse(response PutUserSingleRes, w http.ResponseWrite
 	case *PutUserSingleBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3823,7 +3572,6 @@ func encodePutUserSingleResponse(response PutUserSingleRes, w http.ResponseWrite
 	case *PutUserSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3836,7 +3584,6 @@ func encodePutUserSingleResponse(response PutUserSingleRes, w http.ResponseWrite
 	case *PutUserSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3849,7 +3596,6 @@ func encodePutUserSingleResponse(response PutUserSingleRes, w http.ResponseWrite
 	case *PutUserSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3869,7 +3615,6 @@ func encodePutWorkerSingleResponse(response PutWorkerSingleRes, w http.ResponseW
 	case *ModifyWorker:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3882,7 +3627,6 @@ func encodePutWorkerSingleResponse(response PutWorkerSingleRes, w http.ResponseW
 	case *PutWorkerSingleBadRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3895,7 +3639,6 @@ func encodePutWorkerSingleResponse(response PutWorkerSingleRes, w http.ResponseW
 	case *PutWorkerSingleUnauthorized:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(401)
-		span.SetStatus(codes.Error, http.StatusText(401))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3908,7 +3651,6 @@ func encodePutWorkerSingleResponse(response PutWorkerSingleRes, w http.ResponseW
 	case *PutWorkerSingleForbidden:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(403)
-		span.SetStatus(codes.Error, http.StatusText(403))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -3921,7 +3663,6 @@ func encodePutWorkerSingleResponse(response PutWorkerSingleRes, w http.ResponseW
 	case *PutWorkerSingleNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)

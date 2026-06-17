@@ -1,0 +1,29 @@
+package inference
+
+import "github.com/openai/openai-go/v3/packages/param"
+
+type oasOpt[T any] interface {
+	Get() (v T, ok bool)
+}
+
+func OasOptToOaiOpt[T comparable](val oasOpt[T]) param.Opt[T] {
+	value, ok := val.Get()
+	if !ok {
+		return param.Null[T]()
+	}
+
+	return param.NewOpt(value)
+}
+
+type number interface {
+	int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64 | float32 | float64
+}
+
+func OasOptCastToOaiOpt[I number, O number](val oasOpt[I]) param.Opt[O] {
+	value, ok := val.Get()
+	if !ok {
+		return param.Null[O]()
+	}
+
+	return param.NewOpt(O(value))
+}
