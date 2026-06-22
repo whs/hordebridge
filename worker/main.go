@@ -55,7 +55,7 @@ func NewWorker(config Config) (*Worker, error) {
 // Start the main worker loop
 // The worker loop is defined in https://github.com/Haidra-Org/haidra-assets/blob/main/docs/workers.md
 func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
-	waitTime := 0 * time.Second
+	waitCount := 0
 	errorCount := 0
 
 	sleep := func(dur time.Duration) {
@@ -98,14 +98,22 @@ func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
 		}
 
 		if job.ID.IsNull() || !job.ID.IsSet() {
-			waitTime = min(3*time.Second, 500*time.Millisecond+waitTime)
+			var waitTime time.Duration
+			if waitCount < 10 {
+				waitTime = 1 * time.Second
+			} else if waitCount < 25 {
+				waitTime = 2 * time.Second
+			} else {
+				waitTime = 3 * time.Second
+			}
 			w.logger.DebugContext(ctx, "No job available", "wait", waitTime)
 			sleep(waitTime)
+			waitCount += 1
 			continue
 		}
 
 		// Got a job!
-		waitTime = 0
+		waitCount = 0
 		err = w.ProcessJob(ctx, job)
 		if err != nil {
 			w.logger.ErrorContext(ctx, "Failed to process job. Sending error", "err", err)
