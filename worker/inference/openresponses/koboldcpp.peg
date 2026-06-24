@@ -6,11 +6,20 @@ package koboldcpp
 import (
 	"github.com/openai/openai-go/v3/responses"
 )
+
+type EndOfTurn int
+const EOT EndOfTurn = iota
 }
 
-Prompt = (role:Role / message:.)*
+Prompt = (role:Role / EndOfTurn / message:.)*
 
-Role = SystemRole / UserRole / AssistantRole
+Role = NonCaptureNewLine (SystemRole / UserRole / AssistantRole) NonCaptureNewLine
 SystemRole = "{{[SYSTEM]}}" { return responses.EasyInputMessageRoleSystem, nil }
-UserRole = ("{{[INPUT]}}" / ("\n"? "### Instruction:\n")) { return responses.EasyInputMessageRoleUser, nil }
-AssistantRole = ("{{[OUTPUT]}}" / ("\n"? "### Response:\n")) { return responses.EasyInputMessageRoleAssistant, nil }
+UserRole = ("{{[INPUT]}}" / "### Instruction:\n") { return responses.EasyInputMessageRoleUser, nil }
+AssistantRole = ("{{[OUTPUT]}}" / "### Response:\n") { return responses.EasyInputMessageRoleAssistant, nil }
+
+EndOfTurn = (
+	NonCaptureNewLine ("{{[SYSTEM_END]}}" / "{{[INPUT_END]}}" / "{{[OUTPUT_END]}}" / "<end_of_turn>") NonCaptureNewLine
+) { return EOT, nil }
+
+NonCaptureNewLine = "\n"? { return nil, nil }

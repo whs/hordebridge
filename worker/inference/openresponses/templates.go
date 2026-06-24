@@ -51,6 +51,10 @@ func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error)
 	}
 
 	walk = func(node any) error {
+		if node == any(nil) {
+			return nil
+		}
+
 		switch n := node.(type) {
 		case []any:
 			for _, item := range n {
@@ -59,6 +63,8 @@ func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error)
 					return err
 				}
 			}
+			return nil
+		case koboldcpp.EndOfTurn:
 			return nil
 		case responses.EasyInputMessageRole:
 			hasTag = true

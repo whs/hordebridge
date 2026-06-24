@@ -238,7 +238,7 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		classifiedResult := w.ClassifyContent(ctx, payload.Prompt.Value, generation)
 		logger.InfoContext(ctx, "Classifier result", "classifierResult", classifiedResult)
 
-		// From talking to Horde developers, they seems to think that the classifier code path is basically untested
+		// From talking to Horde developers, they seem to think that the classifier code path is basically untested
 		// and the way to report statuses are varied
 		switch classifiedResult {
 		case ClassifierResultCsam:

@@ -116,6 +116,31 @@ func TestParseKobold(t *testing.T) {
 	}, out)
 }
 
+func TestParseKoboldEndTags(t *testing.T) {
+	out, err := templateParserKoboldCpp("{{[SYSTEM]}}System prompt{{[SYSTEM_END]}}{{[INPUT]}}User prompt{{[INPUT_END]}}{{[OUTPUT]}}")
+	assert.NoError(t, err)
+	assert.Equal(t, responses.ResponseInputParam{
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("System prompt"),
+				},
+				Role: responses.EasyInputMessageRoleSystem,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("User prompt"),
+				},
+				Role: responses.EasyInputMessageRoleUser,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+	}, out)
+}
+
 func TestParseKoboldAlpaca(t *testing.T) {
 	out, err := templateParserKoboldCpp("System prompt\n### Instruction:\nUser prompt\n### Response:\n")
 	assert.NoError(t, err)
