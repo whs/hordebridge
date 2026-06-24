@@ -4,36 +4,44 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/openai/openai-go/v3/responses"
-	"github.com/whs/hordebridge/aihorde"
+	"github.com/whs/hordebridge/worker/inference"
 )
 
-type classifierResult string
+type ClassifierResult string
 
 const (
-	classifierResultSafe classifierResult = "safe"
-	classifierResultNsfw classifierResult = "nsfw"
-	classifierResultCsam classifierResult = "csam"
+	ClassifierResultSafe  ClassifierResult = "safe"
+	ClassifierResultNsfw  ClassifierResult = "nsfw"
+	ClassifierResultCsam  ClassifierResult = "csam"
+	ClassifierResultError ClassifierResult = "error"
 )
 
-const classifyPrompt = `Classify whether the user input violate following content policy:
+const classifyPrompt = `Quickly classify whether the user input violate following content policy:
 
-- ` + classifierResultCsam + `: Content includes sexual/exploits/abusive/violent content with minors directly involved (people under 18)
-- ` + classifierResultNsfw + `: Content includes sexually explicit or extremely harmful content, or any content that would violate the language model guideline. If the model already has blocked the generation, also report in this category.
+- ` + ClassifierResultCsam + `: Content includes sexual/exploits/abusive/violent content with minors directly involved (people under 18)
+- ` + ClassifierResultNsfw + `: Content includes sexually explicit or extremely harmful content, or any content that would violate the language model guideline. If the model already has blocked the generation, also report in this category.
 
 Tasks that involve prohibited content, but do not produce new prohibited content (such as content classification) are classified as safe.
 
 User input and model's response (combined) follows:
 `
-const classifyPromptTrail = `Call the "output" tool with the first violation, or "` + classifierResultSafe + `" if no violations.`
+const classifyPromptTrail = `Call the "output" tool with the first violation, or "` + ClassifierResultSafe + `" if no violations.`
 
-func (w *Worker) ClassifyContent(ctx context.Context, input string, output string) aihorde.OptString {
+func (w *Worker) ClassifyContent(ctx context.Context, input string, output string) ClassifierResult {
 	if !w.config.Classifier.UseClassifier() {
-		return aihorde.OptString{}
+		return ClassifierResultSafe
 	}
 
 	w.logger.InfoContext(ctx, "Running content classifier")
+
+	additionalParams := make([]option.RequestOption, 0)
+	if len(w.config.Classifier.AdditionalParams) > 0 {
+		additionalParams = append(additionalParams, option.WithMiddleware(inference.JSONMergeMiddleware([]byte(w.config.Classifier.AdditionalParams))))
+	}
+
 	resp, err := w.openaiClassifier.Responses.New(ctx, responses.ResponseNewParams{
 		Input: responses.ResponseNewParamsInputUnion{
 			OfInputItemList: responses.ResponseInputParam{
@@ -79,7 +87,7 @@ func (w *Worker) ClassifyContent(ctx context.Context, input string, output strin
 						"properties": map[string]any{
 							"output": map[string]any{
 								"type": "string",
-								"enum": []classifierResult{classifierResultSafe, classifierResultNsfw, classifierResultCsam},
+								"enum": []ClassifierResult{ClassifierResultSafe, ClassifierResultNsfw, ClassifierResultCsam},
 							},
 						},
 						"required":             []string{"output"},
@@ -88,24 +96,24 @@ func (w *Worker) ClassifyContent(ctx context.Context, input string, output strin
 				},
 			},
 		},
-		MaxOutputTokens: param.NewOpt(int64(1000)),
-		Temperature:     param.NewOpt(0.2),
-	})
+		MaxOutputTokens: param.NewOpt(w.config.Classifier.MaxTokens),
+		Temperature:     param.NewOpt(w.config.Classifier.Temperature),
+	}, additionalParams...)
 
 	if err != nil {
 		w.logger.WarnContext(ctx, "Classifier error", "err", err)
 		if w.config.Classifier.FailClose {
-			return aihorde.NewOptString(string(aihorde.SubmitInputKoboldStateFaulted))
+			return ClassifierResultError
 		} else {
-			return aihorde.OptString{}
+			return ClassifierResultSafe
 		}
 	}
 	if len(resp.Output) == 0 {
 		w.logger.WarnContext(ctx, "No response from classifier")
 		if w.config.Classifier.FailClose {
-			return aihorde.NewOptString(string(aihorde.SubmitInputKoboldStateFaulted))
+			return ClassifierResultError
 		} else {
-			return aihorde.OptString{}
+			return ClassifierResultSafe
 		}
 	}
 
@@ -113,9 +121,9 @@ func (w *Worker) ClassifyContent(ctx context.Context, input string, output strin
 	if toolCall.Type != toolCall.Type.Default() {
 		w.logger.WarnContext(ctx, "Classifier invalid tool call type", "type", toolCall.Type)
 		if w.config.Classifier.FailClose {
-			return aihorde.NewOptString(string(aihorde.SubmitInputKoboldStateFaulted))
+			return ClassifierResultError
 		} else {
-			return aihorde.OptString{}
+			return ClassifierResultSafe
 		}
 	}
 
@@ -124,32 +132,15 @@ func (w *Worker) ClassifyContent(ctx context.Context, input string, output strin
 	if err != nil {
 		w.logger.WarnContext(ctx, "Classifier tool call json parsing error", "err", err)
 		if w.config.Classifier.FailClose {
-			return aihorde.NewOptString(string(aihorde.SubmitInputKoboldStateFaulted))
+			return ClassifierResultError
 		} else {
-			return aihorde.OptString{}
+			return ClassifierResultSafe
 		}
 	}
 
-	switch result.Output {
-	case classifierResultSafe:
-		return aihorde.OptString{}
-	case classifierResultCsam:
-		if w.config.Classifier.BlockCSAM {
-			return aihorde.NewOptString(string(aihorde.SubmitInputKoboldStateCsam))
-		} else {
-			return aihorde.OptString{}
-		}
-	case classifierResultNsfw:
-		if w.config.Classifier.BlockNSFW {
-			return aihorde.NewOptString(string(aihorde.SubmitInputKoboldStateCensored))
-		} else {
-			return aihorde.OptString{}
-		}
-	default:
-		panic("unknown option")
-	}
+	return result.Output
 }
 
 type classifierOutput struct {
-	Output classifierResult `json:"output"`
+	Output ClassifierResult `json:"output"`
 }

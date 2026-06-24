@@ -27,10 +27,13 @@ type Config struct {
 }
 
 type ClassifierConfig struct {
-	Server    string `help:"OpenAI server. Must support tools and responses API"`
-	APIKey    string `help:"OpenAI API Key"`
-	Model     string `help:"Model to run classifier"`
-	FailClose bool   `help:"If the classifier fails, then block all requests" default:"false"`
+	Server           string  `help:"OpenAI server. Must support tools and responses API"`
+	APIKey           string  `help:"OpenAI API Key"`
+	Model            string  `help:"Model to run classifier"`
+	FailClose        bool    `help:"If the classifier fails, then block all requests" default:"false"`
+	Temperature      float64 `help:"Classifier temperature" default:"0.2"`
+	MaxTokens        int64   `help:"Classifier max tokens" default:"512"`
+	AdditionalParams string  `help:"JSON merge patch of text completion request body"`
 
 	BlockNSFW bool `help:"Block NSFW content"`
 	BlockCSAM bool `help:"Block child sexual abuse material"`

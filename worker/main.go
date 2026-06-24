@@ -159,8 +159,9 @@ func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
 				}
 			} else {
 				_, sendErrErr := w.aihorde.PostTextJobSubmit(abortCtx, &aihorde.SubmitInputKobold{
-					ID:    job.ID.Value,
-					State: aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateFaulted),
+					ID:         job.ID.Value,
+					Generation: "[Worker error]",
+					State:      aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateFaulted),
 				}, aihorde.PostTextJobSubmitParams{
 					Apikey: w.config.HordeAPIKey,
 				})
@@ -230,22 +231,43 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		return fmt.Errorf("inference error: %w", err)
 	}
 
-	state := aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateOk)
+	metadata := make([]aihorde.GenerationMetadataKobold, 0)
+	state := aihorde.OptSubmitInputKoboldState{}
 
 	if w.config.Classifier.UseClassifier() {
 		classifiedResult := w.ClassifyContent(ctx, payload.Prompt.Value, generation)
-		if classifiedResult.IsSet() {
-			logger.InfoContext(ctx, "Classifier result", "classifierResult", classifiedResult)
-			state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldState(classifiedResult.Value))
-			generation = ""
+		logger.InfoContext(ctx, "Classifier result", "classifierResult", classifiedResult)
+
+		// From talking to Horde developers, they seems to think that the classifier code path is basically untested
+		// and the way to report statuses are varied
+		switch classifiedResult {
+		case ClassifierResultCsam:
+			metadata = append(metadata, aihorde.GenerationMetadataKobold{
+				Type:  aihorde.GenerationMetadataKoboldTypeCensorship,
+				Value: aihorde.GenerationMetadataKoboldValueCsam,
+			})
+			state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateCsam)
+
+			// CSAM is always reported if classifier is run, but the generation will return unless the block is required
+			if !w.config.Classifier.BlockCSAM {
+				break
+			}
+			generation = "[Blocked by worker's content moderation]"
+		case ClassifierResultNsfw:
+			if !w.config.Classifier.BlockNSFW {
+				break
+			}
+			state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateCensored)
+			generation = "[Blocked by worker's content moderation]"
 		}
 	}
 
-	logger.InfoContext(ctx, "Sending job result", "length", len(generation), "state", state.Value)
+	logger.InfoContext(ctx, "Sending job result", "length", len(generation))
 	submitRes, err := w.aihorde.PostTextJobSubmit(ctx, &aihorde.SubmitInputKobold{
-		ID:         job.ID.Value,
-		Generation: generation,
-		State:      state,
+		ID:          job.ID.Value,
+		Generation:  generation,
+		State:       state,
+		GenMetadata: metadata,
 	}, aihorde.PostTextJobSubmitParams{
 		Apikey: w.config.HordeAPIKey,
 	})
