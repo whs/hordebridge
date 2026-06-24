@@ -16,11 +16,12 @@ import (
 )
 
 type Worker struct {
-	config     Config
-	logger     *slog.Logger
-	aihorde    *aihorde.Client
-	openai     openai.Client
-	completion inference.TextInference
+	config           Config
+	logger           *slog.Logger
+	aihorde          *aihorde.Client
+	openai           openai.Client
+	openaiClassifier openai.Client
+	completion       inference.TextInference
 }
 
 func NewWorker(config Config) (*Worker, error) {
@@ -42,6 +43,15 @@ func NewWorker(config Config) (*Worker, error) {
 		}
 	}
 
+	var openaiClassifier openai.Client
+	if config.Classifier.UseClassifier() {
+		openaiClassifier = openai.NewClient(option.WithAPIKey(config.Classifier.APIKey), option.WithBaseURL(config.Classifier.Server))
+
+		if config.Classifier.BlockNSFW && config.NSFW {
+			return nil, fmt.Errorf("--nsfw is allowed, but --classifier-block-nsfw is on")
+		}
+	}
+
 	var completion inference.TextInference
 	completion = inference.NewOpenAICompletion(openaiClient, inference.OpenAICompletionConfig{
 		Model:            config.OpenaiModel,
@@ -58,11 +68,12 @@ func NewWorker(config Config) (*Worker, error) {
 	}
 
 	return &Worker{
-		config:     config,
-		logger:     slog.Default().With("module", "worker"),
-		aihorde:    aihordeClient,
-		openai:     openaiClient,
-		completion: completion,
+		config:           config,
+		logger:           slog.Default().With("module", "worker"),
+		aihorde:          aihordeClient,
+		openai:           openaiClient,
+		openaiClassifier: openaiClassifier,
+		completion:       completion,
 	}, nil
 }
 
@@ -219,11 +230,22 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		return fmt.Errorf("inference error: %w", err)
 	}
 
-	logger.InfoContext(ctx, "Sending job result", "length", len(generation))
+	state := aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateOk)
+
+	if w.config.Classifier.UseClassifier() {
+		classifiedResult := w.ClassifyContent(ctx, payload.Prompt.Value, generation)
+		if classifiedResult.IsSet() {
+			logger.InfoContext(ctx, "Classifier result", "classifierResult", classifiedResult)
+			state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldState(classifiedResult.Value))
+			generation = ""
+		}
+	}
+
+	logger.InfoContext(ctx, "Sending job result", "length", len(generation), "state", state.Value)
 	submitRes, err := w.aihorde.PostTextJobSubmit(ctx, &aihorde.SubmitInputKobold{
 		ID:         job.ID.Value,
 		Generation: generation,
-		State:      aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateOk),
+		State:      state,
 	}, aihorde.PostTextJobSubmitParams{
 		Apikey: w.config.HordeAPIKey,
 	})

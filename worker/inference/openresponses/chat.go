@@ -113,6 +113,7 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 	out := resp.OutputText()
 
 	// If prefill is used, then strip the prefill
+	parsed[len(parsed)-1].GetRole()
 	usedPrefill := parsed[len(parsed)-1].OfMessage.Role == responses.EasyInputMessageRoleAssistant
 	if usedPrefill {
 		prefill := parsed[len(parsed)-1].OfMessage.Content.OfString.String()

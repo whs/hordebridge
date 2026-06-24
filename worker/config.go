@@ -22,4 +22,20 @@ type Config struct {
 	MaxLength int `help:"Maximum output length in tokens" required:""`
 	// MaxContextLength is the maximum input length in tokens
 	MaxContextLength int `help:"Maximum input length in tokens" required:""`
+
+	Classifier ClassifierConfig `embed:"" prefix:"classifier-"`
+}
+
+type ClassifierConfig struct {
+	Server    string `help:"OpenAI server. Must support tools and responses API"`
+	APIKey    string `help:"OpenAI API Key"`
+	Model     string `help:"Model to run classifier"`
+	FailClose bool   `help:"If the classifier fails, then block all requests" default:"false"`
+
+	BlockNSFW bool `help:"Block NSFW content"`
+	BlockCSAM bool `help:"Block child sexual abuse material"`
+}
+
+func (c *ClassifierConfig) UseClassifier() bool {
+	return c != nil && (c.BlockNSFW || c.BlockCSAM)
 }
