@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"time"
@@ -30,16 +31,29 @@ func NewWorker(config Config) (*Worker, error) {
 
 	openaiClient := openai.NewClient(option.WithAPIKey(config.OpenaiAPIKey), option.WithBaseURL(config.OpenaiServer))
 
+	if len(config.AdditionalParams) > 0 {
+		if !json.Valid([]byte(config.AdditionalParams)) {
+			return nil, fmt.Errorf("additional params is not json")
+		}
+	}
+	if len(config.ResponsesAdditionalParams) > 0 {
+		if !json.Valid([]byte(config.ResponsesAdditionalParams)) {
+			return nil, fmt.Errorf("responses additional params is not json")
+		}
+	}
+
 	var completion inference.TextInference
 	completion = inference.NewOpenAICompletion(openaiClient, inference.OpenAICompletionConfig{
-		Model: config.OpenaiModel,
+		Model:            config.OpenaiModel,
+		AdditionalParams: []byte(config.AdditionalParams),
 	})
 
 	if config.ResponsesAPI {
 		slog.Info("Creating worker with responses API parsing")
 		completion = openresponses.New(openaiClient, openresponses.ResponsesConfig{
-			Model:    config.OpenaiModel,
-			Fallback: completion,
+			Model:            config.OpenaiModel,
+			Fallback:         completion,
+			AdditionalParams: []byte(config.ResponsesAdditionalParams),
 		})
 	}
 

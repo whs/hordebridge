@@ -16,7 +16,8 @@ type OpenAITextCompletion struct {
 }
 
 type OpenAICompletionConfig struct {
-	Model string
+	Model            string
+	AdditionalParams []byte
 }
 
 var _ TextInference = &OpenAITextCompletion{}
@@ -46,6 +47,15 @@ func (o *OpenAITextCompletion) GenerateText(ctx context.Context, job *aihorde.Ge
 	}
 	if repPen, ok := payload.RepPen.Get(); ok {
 		additionalParams = append(additionalParams, option.WithJSONSet("repetition_penalty", repPen))
+	}
+	if dynatempRange, ok := payload.DynatempRange.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("dynatemp_range", dynatempRange))
+	}
+	if dynatempExponent, ok := payload.DynatempExponent.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("dynatemp_exponent", dynatempExponent))
+	}
+	if len(o.config.AdditionalParams) > 0 {
+		additionalParams = append(additionalParams, option.WithMiddleware(JSONMergeMiddleware(o.config.AdditionalParams)))
 	}
 
 	resp, err := o.client.Completions.New(ctx, openai.CompletionNewParams{

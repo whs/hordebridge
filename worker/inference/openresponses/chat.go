@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-faster/errors"
 	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/responses"
 	"github.com/whs/hordebridge/aihorde"
 	"github.com/whs/hordebridge/worker/inference"
@@ -19,8 +20,9 @@ type OpenResponsesCompletion struct {
 }
 
 type ResponsesConfig struct {
-	Model    string
-	Fallback inference.TextInference
+	Model            string
+	AdditionalParams []byte
+	Fallback         inference.TextInference
 }
 
 var _ inference.TextInference = &OpenResponsesCompletion{}
@@ -47,6 +49,11 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 		return "", fmt.Errorf("chat template execution failed: %w", err)
 	}
 
+	additionalParams := make([]option.RequestOption, 0)
+	if len(o.config.AdditionalParams) > 0 {
+		additionalParams = append(additionalParams, option.WithMiddleware(inference.JSONMergeMiddleware(o.config.AdditionalParams)))
+	}
+
 	o.logger.DebugContext(ctx, "Using responses API", "conversation_length", len(parsed), "last_turn_role", parsed[len(parsed)-1].OfMessage.Role)
 	resp, err := o.client.Responses.New(ctx, responses.ResponseNewParams{
 		MaxOutputTokens: inference.OasOptCastToOaiOpt[int, int64](payload.MaxLength),
@@ -56,7 +63,7 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 			OfInputItemList: parsed,
 		},
 		Model: o.config.Model,
-	})
+	}, additionalParams...)
 
 	if err != nil {
 		return "", fmt.Errorf("openai error: %w", err)

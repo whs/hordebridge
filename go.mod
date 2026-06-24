@@ -5,6 +5,7 @@ go 1.26.4
 require (
 	github.com/alecthomas/assert/v2 v2.11.0
 	github.com/alecthomas/kong v1.15.0
+	github.com/evanphx/json-patch v0.5.2
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.2.0
 	github.com/ogen-go/ogen v1.20.3
@@ -27,6 +28,7 @@ require (
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/tidwall/gjson v1.18.0 // indirect
