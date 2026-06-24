@@ -34,8 +34,23 @@ Only some model parameters are supported. The others are silently dropped
 - min_p
 - typical
 - rep_pen
+- dynatemp_range
+- dynatemp_exponent
 
 Note that the underlying API may also not support some of these parameters.
+
+## Responses API
+
+Hordgebridge supports detection and conversion of chat templates to [OpenResponses API](https://www.openresponses.org/).
+
+The supported chat template tags are:
+
+- KoboldCPP (`{{[SYSTEM]}}, {{[INPUT]}}, {{[OUTPUT]}}`)
+- Alpaca (`### Instruction:\n, ### Response:\n`)
+
+Continuation is supported as prefills - the last turn is tagged as "assistant" and the agent is supposed to continue writing
+that turn without creating double assistant turns in a row.
+You'll need to ensure that the underlying API is supported.
 
 ## License
 

@@ -32,6 +32,29 @@ func TestParseKobold(t *testing.T) {
 		},
 	}, out)
 
+	out, err = templateParserKoboldCpp("Cont. prompt{{[INPUT]}}User prompt{{[OUTPUT]}}")
+	assert.NoError(t, err)
+	assert.Equal(t, responses.ResponseInputParam{
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("Cont. prompt"),
+				},
+				Role: responses.EasyInputMessageRoleUser,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("User prompt"),
+				},
+				Role: responses.EasyInputMessageRoleUser,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+	}, out)
+
 	out, err = templateParserKoboldCpp("{{[INPUT]}}User prompt{{[OUTPUT]}}")
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
@@ -87,6 +110,69 @@ func TestParseKobold(t *testing.T) {
 					OfString: param.NewOpt("Prefill"),
 				},
 				Role: responses.EasyInputMessageRoleAssistant,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+	}, out)
+}
+
+func TestParseKoboldAlpaca(t *testing.T) {
+	out, err := templateParserKoboldCpp("System prompt\n### Instruction:\nUser prompt\n### Response:\n")
+	assert.NoError(t, err)
+	assert.Equal(t, responses.ResponseInputParam{
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("System prompt"),
+				},
+				// TODO: Detect alpaca tag then set the initial prompt as system prompt
+				Role: responses.EasyInputMessageRoleUser,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("User prompt"),
+				},
+				Role: responses.EasyInputMessageRoleUser,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+	}, out)
+
+	out, err = templateParserKoboldCpp("\n### Instruction:\nUser prompt\n### Response:\nPrefill")
+	assert.NoError(t, err)
+	assert.Equal(t, responses.ResponseInputParam{
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("User prompt"),
+				},
+				Role: responses.EasyInputMessageRoleUser,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("Prefill"),
+				},
+				Role: responses.EasyInputMessageRoleAssistant,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+	}, out)
+
+	out, err = templateParserKoboldCpp("### Instruction:\nUser prompt")
+	assert.NoError(t, err)
+	assert.Equal(t, responses.ResponseInputParam{
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("User prompt"),
+				},
+				Role: responses.EasyInputMessageRoleUser,
 				Type: responses.EasyInputMessageTypeMessage,
 			},
 		},

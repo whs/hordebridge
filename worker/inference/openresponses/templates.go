@@ -28,13 +28,20 @@ func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error)
 
 	var walk func(any) error
 	var lastString strings.Builder
+	hasTag := false
 
 	flushLastString := func() error {
 		if lastString.Len() == 0 {
 			return nil
 		}
 		if len(out) == 0 {
-			return ErrTemplateNoMatch
+			// If there is no message at all, then flush it as user message
+			out = append(out, responses.ResponseInputItemUnionParam{
+				OfMessage: &responses.EasyInputMessageParam{
+					Role: responses.EasyInputMessageRoleUser,
+					Type: responses.EasyInputMessageTypeMessage,
+				},
+			})
 		}
 
 		out[len(out)-1].OfMessage.Content.OfString = param.NewOpt(lastString.String())
@@ -54,6 +61,7 @@ func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error)
 			}
 			return nil
 		case responses.EasyInputMessageRole:
+			hasTag = true
 			err = flushLastString()
 			if err != nil {
 				return err
@@ -76,6 +84,10 @@ func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error)
 	err = walk(matches)
 	if err != nil {
 		return nil, err
+	}
+	if !hasTag {
+		// If there is no tag then we just match the whole string for nothin
+		return nil, ErrTemplateNoMatch
 	}
 	err = flushLastString()
 

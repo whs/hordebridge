@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"slices"
+	"strings"
 
 	"github.com/go-faster/errors"
 	"github.com/openai/openai-go/v3"
@@ -12,6 +14,19 @@ import (
 	"github.com/whs/hordebridge/aihorde"
 	"github.com/whs/hordebridge/worker/inference"
 )
+
+// stopTags are potential stop tokens
+var stopTags = []string{
+	"{{[INPUT]}}",
+	"{{[OUTPUT]}}",
+	"{{[SYSTEM]}}",
+	"\n### Instruction:\n",
+	"\n### Response:\n",
+	"### Instruction:\n",
+	"### Response:\n",
+	"### Instruction:",
+	"### Response:",
+}
 
 type OpenResponsesCompletion struct {
 	client openai.Client
@@ -41,6 +56,13 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 		return "", fmt.Errorf("no job payload")
 	}
 
+	hasStopTag := slices.ContainsFunc(payload.StopSequence, func(s string) bool {
+		return slices.Contains(stopTags, s)
+	})
+	if !hasStopTag {
+		return o.config.Fallback.GenerateText(ctx, job)
+	}
+
 	parsed, err := templateParserKoboldCpp(payload.Prompt.Value)
 	if errors.Is(err, ErrTemplateNoMatch) {
 		// Fallback when the chat template doesn't match
@@ -50,6 +72,25 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 	}
 
 	additionalParams := make([]option.RequestOption, 0)
+
+	if topK, ok := payload.TopK.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("top_k", topK))
+	}
+	if minP, ok := payload.MinP.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("min_p", minP))
+	}
+	if typical, ok := payload.Typical.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("typical_p", typical))
+	}
+	if repPen, ok := payload.RepPen.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("repetition_penalty", repPen))
+	}
+	if dynatempRange, ok := payload.DynatempRange.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("dynatemp_range", dynatempRange))
+	}
+	if dynatempExponent, ok := payload.DynatempExponent.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("dynatemp_exponent", dynatempExponent))
+	}
 	if len(o.config.AdditionalParams) > 0 {
 		additionalParams = append(additionalParams, option.WithMiddleware(inference.JSONMergeMiddleware(o.config.AdditionalParams)))
 	}
@@ -57,8 +98,8 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 	o.logger.DebugContext(ctx, "Using responses API", "conversation_length", len(parsed), "last_turn_role", parsed[len(parsed)-1].OfMessage.Role)
 	resp, err := o.client.Responses.New(ctx, responses.ResponseNewParams{
 		MaxOutputTokens: inference.OasOptCastToOaiOpt[int, int64](payload.MaxLength),
-		Temperature:     inference.OasOptToOaiOpt[float64](payload.Temperature),
-		TopP:            inference.OasOptToOaiOpt[float64](payload.TopP),
+		Temperature:     inference.OasOptToOaiOpt(payload.Temperature),
+		TopP:            inference.OasOptToOaiOpt(payload.TopP),
 		Input: responses.ResponseNewParamsInputUnion{
 			OfInputItemList: parsed,
 		},
@@ -69,5 +110,14 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 		return "", fmt.Errorf("openai error: %w", err)
 	}
 
-	return resp.OutputText(), nil
+	out := resp.OutputText()
+
+	// If prefill is used, then strip the prefill
+	usedPrefill := parsed[len(parsed)-1].OfMessage.Role == responses.EasyInputMessageRoleAssistant
+	if usedPrefill {
+		prefill := parsed[len(parsed)-1].OfMessage.Content.OfString.String()
+		out = strings.TrimPrefix(out, prefill)
+	}
+
+	return out, nil
 }

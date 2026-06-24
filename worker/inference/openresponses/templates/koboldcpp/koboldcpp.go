@@ -23,41 +23,24 @@ var g = &grammar{
 		{
 			name: "Prompt",
 			pos:  position{line: 11, col: 1, offset: 109},
-			expr: &seqExpr{
-				pos: position{line: 11, col: 11, offset: 119},
-				exprs: []any{
-					&labeledExpr{
-						pos:   position{line: 11, col: 11, offset: 119},
-						label: "role",
-						expr: &ruleRefExpr{
-							pos:  position{line: 11, col: 16, offset: 124},
-							name: "Role",
+			expr: &zeroOrMoreExpr{
+				pos: position{line: 11, col: 10, offset: 118},
+				expr: &choiceExpr{
+					pos: position{line: 11, col: 11, offset: 119},
+					alternatives: []any{
+						&labeledExpr{
+							pos:   position{line: 11, col: 11, offset: 119},
+							label: "role",
+							expr: &ruleRefExpr{
+								pos:  position{line: 11, col: 16, offset: 124},
+								name: "Role",
+							},
 						},
-					},
-					&labeledExpr{
-						pos:   position{line: 11, col: 21, offset: 129},
-						label: "child",
-						expr: &zeroOrMoreExpr{
-							pos: position{line: 11, col: 27, offset: 135},
-							expr: &choiceExpr{
-								pos: position{line: 12, col: 2, offset: 138},
-								alternatives: []any{
-									&labeledExpr{
-										pos:   position{line: 12, col: 2, offset: 138},
-										label: "nested",
-										expr: &ruleRefExpr{
-											pos:  position{line: 12, col: 9, offset: 145},
-											name: "Prompt",
-										},
-									},
-									&labeledExpr{
-										pos:   position{line: 13, col: 4, offset: 155},
-										label: "message",
-										expr: &anyMatcher{
-											line: 13, col: 12, offset: 163,
-										},
-									},
-								},
+						&labeledExpr{
+							pos:   position{line: 11, col: 23, offset: 131},
+							label: "message",
+							expr: &anyMatcher{
+								line: 11, col: 31, offset: 139,
 							},
 						},
 					},
@@ -66,20 +49,20 @@ var g = &grammar{
 		},
 		{
 			name: "Role",
-			pos:  position{line: 16, col: 1, offset: 170},
+			pos:  position{line: 13, col: 1, offset: 144},
 			expr: &choiceExpr{
-				pos: position{line: 16, col: 8, offset: 177},
+				pos: position{line: 13, col: 8, offset: 151},
 				alternatives: []any{
 					&ruleRefExpr{
-						pos:  position{line: 16, col: 8, offset: 177},
+						pos:  position{line: 13, col: 8, offset: 151},
 						name: "SystemRole",
 					},
 					&ruleRefExpr{
-						pos:  position{line: 16, col: 21, offset: 190},
+						pos:  position{line: 13, col: 21, offset: 164},
 						name: "UserRole",
 					},
 					&ruleRefExpr{
-						pos:  position{line: 16, col: 32, offset: 201},
+						pos:  position{line: 13, col: 32, offset: 175},
 						name: "AssistantRole",
 					},
 				},
@@ -87,12 +70,12 @@ var g = &grammar{
 		},
 		{
 			name: "SystemRole",
-			pos:  position{line: 17, col: 1, offset: 215},
+			pos:  position{line: 14, col: 1, offset: 189},
 			expr: &actionExpr{
-				pos: position{line: 17, col: 14, offset: 228},
+				pos: position{line: 14, col: 14, offset: 202},
 				run: (*parser).callonSystemRole1,
 				expr: &litMatcher{
-					pos:        position{line: 17, col: 14, offset: 228},
+					pos:        position{line: 14, col: 14, offset: 202},
 					val:        "{{[SYSTEM]}}",
 					ignoreCase: false,
 					want:       "\"{{[SYSTEM]}}\"",
@@ -101,29 +84,79 @@ var g = &grammar{
 		},
 		{
 			name: "UserRole",
-			pos:  position{line: 18, col: 1, offset: 296},
+			pos:  position{line: 15, col: 1, offset: 270},
 			expr: &actionExpr{
-				pos: position{line: 18, col: 12, offset: 307},
+				pos: position{line: 15, col: 12, offset: 281},
 				run: (*parser).callonUserRole1,
-				expr: &litMatcher{
-					pos:        position{line: 18, col: 12, offset: 307},
-					val:        "{{[INPUT]}}",
-					ignoreCase: false,
-					want:       "\"{{[INPUT]}}\"",
+				expr: &choiceExpr{
+					pos: position{line: 15, col: 13, offset: 282},
+					alternatives: []any{
+						&litMatcher{
+							pos:        position{line: 15, col: 13, offset: 282},
+							val:        "{{[INPUT]}}",
+							ignoreCase: false,
+							want:       "\"{{[INPUT]}}\"",
+						},
+						&seqExpr{
+							pos: position{line: 15, col: 30, offset: 299},
+							exprs: []any{
+								&zeroOrOneExpr{
+									pos: position{line: 15, col: 30, offset: 299},
+									expr: &litMatcher{
+										pos:        position{line: 15, col: 30, offset: 299},
+										val:        "\n",
+										ignoreCase: false,
+										want:       "\"\\n\"",
+									},
+								},
+								&litMatcher{
+									pos:        position{line: 15, col: 36, offset: 305},
+									val:        "### Instruction:\n",
+									ignoreCase: false,
+									want:       "\"### Instruction:\\n\"",
+								},
+							},
+						},
+					},
 				},
 			},
 		},
 		{
 			name: "AssistantRole",
-			pos:  position{line: 19, col: 1, offset: 372},
+			pos:  position{line: 16, col: 1, offset: 379},
 			expr: &actionExpr{
-				pos: position{line: 19, col: 17, offset: 388},
+				pos: position{line: 16, col: 17, offset: 395},
 				run: (*parser).callonAssistantRole1,
-				expr: &litMatcher{
-					pos:        position{line: 19, col: 17, offset: 388},
-					val:        "{{[OUTPUT]}}",
-					ignoreCase: false,
-					want:       "\"{{[OUTPUT]}}\"",
+				expr: &choiceExpr{
+					pos: position{line: 16, col: 18, offset: 396},
+					alternatives: []any{
+						&litMatcher{
+							pos:        position{line: 16, col: 18, offset: 396},
+							val:        "{{[OUTPUT]}}",
+							ignoreCase: false,
+							want:       "\"{{[OUTPUT]}}\"",
+						},
+						&seqExpr{
+							pos: position{line: 16, col: 36, offset: 414},
+							exprs: []any{
+								&zeroOrOneExpr{
+									pos: position{line: 16, col: 36, offset: 414},
+									expr: &litMatcher{
+										pos:        position{line: 16, col: 36, offset: 414},
+										val:        "\n",
+										ignoreCase: false,
+										want:       "\"\\n\"",
+									},
+								},
+								&litMatcher{
+									pos:        position{line: 16, col: 42, offset: 420},
+									val:        "### Response:\n",
+									ignoreCase: false,
+									want:       "\"### Response:\\n\"",
+								},
+							},
+						},
+					},
 				},
 			},
 		},

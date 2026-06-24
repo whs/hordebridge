@@ -8,12 +8,9 @@ import (
 )
 }
 
-Prompt = (role:Role child:(
-	nested:Prompt
-	/ message:.
-)*)
+Prompt = (role:Role / message:.)*
 
 Role = SystemRole / UserRole / AssistantRole
 SystemRole = "{{[SYSTEM]}}" { return responses.EasyInputMessageRoleSystem, nil }
-UserRole = "{{[INPUT]}}" { return responses.EasyInputMessageRoleUser, nil }
-AssistantRole = "{{[OUTPUT]}}" { return responses.EasyInputMessageRoleAssistant, nil }
+UserRole = ("{{[INPUT]}}" / ("\n"? "### Instruction:\n")) { return responses.EasyInputMessageRoleUser, nil }
+AssistantRole = ("{{[OUTPUT]}}" / ("\n"? "### Response:\n")) { return responses.EasyInputMessageRoleAssistant, nil }
