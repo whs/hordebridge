@@ -41,7 +41,7 @@ Note that the underlying API may also not support some of these parameters.
 
 ## Responses API
 
-Hordgebridge supports detection and conversion of chat templates to [OpenResponses API](https://www.openresponses.org/).
+Hordebridge supports detection and conversion of chat templates to [OpenResponses API](https://www.openresponses.org/).
 
 The supported chat template tags are:
 
@@ -51,6 +51,21 @@ The supported chat template tags are:
 Continuation is supported as prefills - the last turn is tagged as "assistant" and the agent is supposed to continue writing
 that turn without creating double assistant turns in a row.
 You'll need to ensure that the underlying API is supported.
+
+## Content moderation
+
+Hordebridge supports content moderation. It is off by default. Use `--classifier-block-nsfw` and/or `--classifier-block-csam` to enable.
+Note that `--classifier-block-nsfw` is not allowed together with `--no-nsfw`.
+
+The classifier works by sending the input prompt to your current model, along with a system prompt.
+The model must support tool calls for this to work. Alternatively, you can configure alternative OpenResponses server/model as well.
+
+When the classifier is active (by enable *any* block option), the following actions will be taken:
+
+- If CSAM is detected, the job state will be reported as "csam" (even if block-csam is off) and if the block is enabled, the generated text replaced with a blocked message.
+- If NSFW content is detected and the block is on, the job state is reported as censored and the generated text replaced with a blocked message.
+
+If the classifier errors out, no action will be taken unless `--classifier-fail-close` is set.
 
 ## License
 

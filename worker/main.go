@@ -16,6 +16,8 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+var errContentClassifier = errors.New("blocked by content classifier")
+
 type Worker struct {
 	config           Config
 	logger           *slog.Logger
@@ -239,21 +241,37 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 	var classifiedResult ClassifierResult
 
 	errGroup, errCtx := errgroup.WithContext(ctx)
+	generationCtx, generationCtxCancel := context.WithCancelCause(errCtx)
+	defer generationCtxCancel(context.Canceled)
 
 	errGroup.Go(func() error {
 		var err error
 
 		logger.InfoContext(errCtx, "Running text generation")
-		generation, err = w.completion.GenerateText(errCtx, job)
+		generation, err = w.completion.GenerateText(generationCtx, job)
+
+		if errors.Is(err, errContentClassifier) || errors.Is(err, context.Canceled) {
+			return nil
+		}
 
 		return err
 	})
 
 	if w.config.Classifier.UseClassifier() {
 		errGroup.Go(func() error {
-			w.logger.InfoContext(ctx, "Running content classifier")
+			logger.InfoContext(errCtx, "Running content classifier")
 			classifiedResult = w.ClassifyContent(errCtx, payload.Prompt.Value, "")
 			logger.InfoContext(errCtx, "Classifier result", "classifierResult", classifiedResult)
+
+			// If the classifier reported one of the blocking result then abort generation early
+			isBlocked := (w.config.Classifier.BlockNSFW && classifiedResult == ClassifierResultNsfw) ||
+				(w.config.Classifier.BlockCSAM && classifiedResult == ClassifierResultCsam) ||
+				(w.config.Classifier.FailClose && classifiedResult == ClassifierResultError)
+			if isBlocked {
+				w.logger.DebugContext(errCtx, "Aborting generation")
+				generationCtxCancel(errContentClassifier)
+			}
+
 			return nil
 		})
 	}
@@ -286,6 +304,12 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		}
 		state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateCensored)
 		generation = "[Blocked by worker's content moderation]"
+	case ClassifierResultError:
+		if !w.config.Classifier.FailClose {
+			break
+		}
+		state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateFaulted)
+		generation = "[Worker's content moderation fault, and fail close policy is active]"
 	}
 
 	logger.InfoContext(ctx, "Sending job result", "length", len(generation))
