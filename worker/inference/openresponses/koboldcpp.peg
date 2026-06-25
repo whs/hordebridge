@@ -13,10 +13,21 @@ const EOT EndOfTurn = iota
 
 Prompt = (role:Role / EndOfTurn / message:.)*
 
-Role = NonCaptureNewLine (SystemRole / UserRole / AssistantRole) NonCaptureNewLine
-SystemRole = "{{[SYSTEM]}}" { return responses.EasyInputMessageRoleSystem, nil }
-UserRole = ("{{[INPUT]}}" / "### Instruction:\n") { return responses.EasyInputMessageRoleUser, nil }
-AssistantRole = ("{{[OUTPUT]}}" / "### Response:\n") { return responses.EasyInputMessageRoleAssistant, nil }
+Role = SystemRole / UserRole / AssistantRole
+SystemRole = (
+	"{{[SYSTEM]}}"
+	/ NonCaptureNewLine "<start_of_turn>system\n"
+) { return responses.EasyInputMessageRoleSystem, nil }
+UserRole = (
+	"{{[INPUT]}}"
+	/ NonCaptureNewLine "### Instruction:\n"
+	/ NonCaptureNewLine "<start_of_turn>user\n"
+) { return responses.EasyInputMessageRoleUser, nil }
+AssistantRole = (
+	"{{[OUTPUT]}}"
+	/ NonCaptureNewLine "### Response:\n"
+	/ NonCaptureNewLine "<start_of_turn>model\n"
+) { return responses.EasyInputMessageRoleAssistant, nil }
 
 EndOfTurn = (
 	NonCaptureNewLine ("{{[SYSTEM_END]}}" / "{{[INPUT_END]}}" / "{{[OUTPUT_END]}}" / "<end_of_turn>") NonCaptureNewLine

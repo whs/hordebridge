@@ -45,6 +45,15 @@ func NewWorker(config Config) (*Worker, error) {
 
 	var openaiClassifier openai.Client
 	if config.Classifier.UseClassifier() {
+		if config.Classifier.APIKey == "" {
+			config.Classifier.APIKey = config.OpenaiAPIKey
+		}
+		if config.Classifier.Server == "" {
+			config.Classifier.Server = config.OpenaiServer
+		}
+		if config.Classifier.Model == "" {
+			config.Classifier.Server = config.OpenaiModel
+		}
 		openaiClassifier = openai.NewClient(option.WithAPIKey(config.Classifier.APIKey), option.WithBaseURL(config.Classifier.Server))
 
 		if config.Classifier.BlockNSFW && config.NSFW {

@@ -204,6 +204,40 @@ func TestParseKoboldAlpaca(t *testing.T) {
 	}, out)
 }
 
+func TestParseKoboldGemma(t *testing.T) {
+	out, err := templateParserKoboldCpp("<start_of_turn>system\nSystem prompt<end_of_turn>\n<start_of_turn>user\nUser prompt<end_of_turn>\n<start_of_turn>model\nModel")
+	assert.NoError(t, err)
+	assert.Equal(t, responses.ResponseInputParam{
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("System prompt"),
+				},
+				Role: responses.EasyInputMessageRoleSystem,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("User prompt"),
+				},
+				Role: responses.EasyInputMessageRoleUser,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("Model"),
+				},
+				Role: responses.EasyInputMessageRoleAssistant,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+	}, out)
+}
+
 func TestParseKoboldInvalid(t *testing.T) {
 	_, err := templateParserKoboldCpp("User: Hello\nAssistant:")
 	assert.IsError(t, err, ErrTemplateNoMatch)

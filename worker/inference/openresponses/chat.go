@@ -20,12 +20,11 @@ var stopTags = []string{
 	"{{[INPUT]}}",
 	"{{[OUTPUT]}}",
 	"{{[SYSTEM]}}",
-	"\n### Instruction:\n",
-	"\n### Response:\n",
-	"### Instruction:\n",
-	"### Response:\n",
 	"### Instruction:",
 	"### Response:",
+	"<start_of_turn>user",
+	"<start_of_turn>model",
+	"<start_of_turn>system",
 }
 
 type OpenResponsesCompletion struct {
@@ -57,7 +56,7 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 	}
 
 	hasStopTag := slices.ContainsFunc(payload.StopSequence, func(s string) bool {
-		return slices.Contains(stopTags, s)
+		return slices.Contains(stopTags, strings.Trim(s, " \r\n"))
 	})
 	if !hasStopTag {
 		return o.config.Fallback.GenerateText(ctx, job)
