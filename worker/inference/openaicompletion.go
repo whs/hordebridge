@@ -36,23 +36,30 @@ func (o *OpenAITextCompletion) GenerateText(ctx context.Context, job *aihorde.Ge
 	}
 
 	additionalParams := make([]option.RequestOption, 0)
-	if topK, ok := payload.TopK.Get(); ok {
+	// https://github.com/Haidra-Org/AI-Horde-Worker/blob/d0bacd83f996550d934c105ea25ac7a0e0fb380e/worker/jobs/scribe.py#L78
+	if repPen, ok := payload.RepPen.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("repetition_penalty", repPen))
+	}
+	if dynatempExponent, ok := payload.DynatempExponent.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("dynatemp_exponent", dynatempExponent))
+	}
+	if dynatempRange, ok := payload.DynatempRange.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("dynatemp_range", dynatempRange))
+	}
+	if tfs, ok := payload.Tfs.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("tfs", tfs))
+	}
+	if topK, ok := payload.TopK.Get(); ok && topK != 0.0 {
 		additionalParams = append(additionalParams, option.WithJSONSet("top_k", topK))
+	}
+	if topA, ok := payload.TopA.Get(); ok {
+		additionalParams = append(additionalParams, option.WithJSONSet("top_a", topA))
 	}
 	if minP, ok := payload.MinP.Get(); ok {
 		additionalParams = append(additionalParams, option.WithJSONSet("min_p", minP))
 	}
 	if typical, ok := payload.Typical.Get(); ok {
 		additionalParams = append(additionalParams, option.WithJSONSet("typical_p", typical))
-	}
-	if repPen, ok := payload.RepPen.Get(); ok {
-		additionalParams = append(additionalParams, option.WithJSONSet("repetition_penalty", repPen))
-	}
-	if dynatempRange, ok := payload.DynatempRange.Get(); ok {
-		additionalParams = append(additionalParams, option.WithJSONSet("dynatemp_range", dynatempRange))
-	}
-	if dynatempExponent, ok := payload.DynatempExponent.Get(); ok {
-		additionalParams = append(additionalParams, option.WithJSONSet("dynatemp_exponent", dynatempExponent))
 	}
 	if len(o.config.AdditionalParams) > 0 {
 		additionalParams = append(additionalParams, option.WithMiddleware(JSONMergeMiddleware(o.config.AdditionalParams)))

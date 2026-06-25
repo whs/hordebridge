@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"sync"
 	"time"
 
 	"github.com/go-faster/errors"
@@ -25,6 +26,7 @@ type Worker struct {
 	openai           openai.Client
 	openaiClassifier openai.Client
 	completion       inference.TextInference
+	submitWg         sync.WaitGroup
 }
 
 func NewWorker(config Config) (*Worker, error) {
@@ -101,6 +103,8 @@ func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
 		case <-time.After(dur):
 		}
 	}
+
+	defer w.submitWg.Wait()
 
 	onError := func(err error) bool {
 		errorCount += 1
@@ -312,25 +316,30 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		generation = "[Worker's content moderation fault, and fail close policy is active]"
 	}
 
-	logger.InfoContext(ctx, "Sending job result", "length", len(generation))
-	submitRes, err := w.aihorde.PostTextJobSubmit(ctx, &aihorde.SubmitInputKobold{
-		ID:          job.ID.Value,
-		Generation:  generation,
-		State:       state,
-		GenMetadata: metadata,
-	}, aihorde.PostTextJobSubmitParams{
-		Apikey: w.config.HordeAPIKey,
+	w.submitWg.Go(func() {
+		// Don't use ctx here it will expire
+		logger.InfoContext(parentCtx, "Sending job result", "length", len(generation))
+		submitRes, err := w.aihorde.PostTextJobSubmit(parentCtx, &aihorde.SubmitInputKobold{
+			ID:          job.ID.Value,
+			Generation:  generation,
+			State:       state,
+			GenMetadata: metadata,
+		}, aihorde.PostTextJobSubmitParams{
+			Apikey: w.config.HordeAPIKey,
+		})
+
+		if err != nil {
+			logger.ErrorContext(parentCtx, "Failed to submit job", "err", err)
+			return
+		}
+
+		switch submitRes.(type) {
+		case *aihorde.GenerationSubmitted:
+			logger.InfoContext(parentCtx, "Job completed")
+		default:
+			logger.WarnContext(parentCtx, "Unknown submission response type", "response", submitRes)
+		}
 	})
 
-	if err != nil {
-		return fmt.Errorf("failed to submit job: %w", err)
-	}
-
-	switch submitRes.(type) {
-	case *aihorde.GenerationSubmitted:
-		logger.InfoContext(ctx, "Job completed")
-		return nil
-	default:
-		return fmt.Errorf("unknown response type: %+v", submitRes)
-	}
+	return nil
 }
