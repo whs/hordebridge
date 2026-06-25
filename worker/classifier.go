@@ -31,11 +31,10 @@ User input and model's response (combined) follows:
 const classifyPromptTrail = `Call the "output" tool with the first violation, or "` + ClassifierResultSafe + `" if no violations.`
 
 func (w *Worker) ClassifyContent(ctx context.Context, input string, output string) ClassifierResult {
+	// XXX: In current version, output is always "" since it is run in parallel
 	if !w.config.Classifier.UseClassifier() {
 		return ClassifierResultSafe
 	}
-
-	w.logger.InfoContext(ctx, "Running content classifier")
 
 	additionalParams := make([]option.RequestOption, 0)
 	if len(w.config.Classifier.AdditionalParams) > 0 {

@@ -13,6 +13,7 @@ import (
 	"github.com/whs/hordebridge/aihorde"
 	"github.com/whs/hordebridge/worker/inference"
 	"github.com/whs/hordebridge/worker/inference/openresponses"
+	"golang.org/x/sync/errgroup"
 )
 
 type Worker struct {
@@ -221,7 +222,6 @@ func (w *Worker) GetJob(ctx context.Context) (*aihorde.GenerationPayloadKobold, 
 
 func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPayloadKobold) error {
 	logger := w.logger.With("jobId", job.ID.Value)
-	logger.InfoContext(parentCtx, "Processing job")
 
 	ctx, cancel := context.WithTimeout(parentCtx, time.Duration(job.TTL.Or(60*60))*time.Second)
 	defer cancel()
@@ -235,40 +235,57 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		return NewReportableError(errors.New("max_length validation error"), aihorde.SubmitInputKoboldStateFaulted, "Requested max length %d > allowed %d", maxLength, w.config.MaxLength)
 	}
 
-	generation, err := w.completion.GenerateText(ctx, job)
+	var generation string
+	var classifiedResult ClassifierResult
+
+	errGroup, errCtx := errgroup.WithContext(ctx)
+
+	errGroup.Go(func() error {
+		var err error
+
+		logger.InfoContext(errCtx, "Running text generation")
+		generation, err = w.completion.GenerateText(errCtx, job)
+
+		return err
+	})
+
+	if w.config.Classifier.UseClassifier() {
+		errGroup.Go(func() error {
+			w.logger.InfoContext(ctx, "Running content classifier")
+			classifiedResult = w.ClassifyContent(errCtx, payload.Prompt.Value, "")
+			logger.InfoContext(errCtx, "Classifier result", "classifierResult", classifiedResult)
+			return nil
+		})
+	}
+
+	err := errGroup.Wait()
 	if err != nil {
 		return fmt.Errorf("inference error: %w", err)
 	}
-
 	metadata := make([]aihorde.GenerationMetadataKobold, 0)
 	state := aihorde.OptSubmitInputKoboldState{}
 
-	if w.config.Classifier.UseClassifier() {
-		classifiedResult := w.ClassifyContent(ctx, payload.Prompt.Value, generation)
-		logger.InfoContext(ctx, "Classifier result", "classifierResult", classifiedResult)
+	// From talking to Horde developers, they seem to think that the classifier code path is basically untested
+	// and the way to report statuses are varied
+	switch classifiedResult {
+	case ClassifierResultCsam:
+		metadata = append(metadata, aihorde.GenerationMetadataKobold{
+			Type:  aihorde.GenerationMetadataKoboldTypeCensorship,
+			Value: aihorde.GenerationMetadataKoboldValueCsam,
+		})
+		state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateCsam)
 
-		// From talking to Horde developers, they seem to think that the classifier code path is basically untested
-		// and the way to report statuses are varied
-		switch classifiedResult {
-		case ClassifierResultCsam:
-			metadata = append(metadata, aihorde.GenerationMetadataKobold{
-				Type:  aihorde.GenerationMetadataKoboldTypeCensorship,
-				Value: aihorde.GenerationMetadataKoboldValueCsam,
-			})
-			state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateCsam)
-
-			// CSAM is always reported if classifier is run, but the generation will return unless the block is required
-			if !w.config.Classifier.BlockCSAM {
-				break
-			}
-			generation = "[Blocked by worker's content moderation]"
-		case ClassifierResultNsfw:
-			if !w.config.Classifier.BlockNSFW {
-				break
-			}
-			state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateCensored)
-			generation = "[Blocked by worker's content moderation]"
+		// CSAM is always reported if classifier is run, but the generation will return unless the block is required
+		if !w.config.Classifier.BlockCSAM {
+			break
 		}
+		generation = "[Blocked by worker's content moderation]"
+	case ClassifierResultNsfw:
+		if !w.config.Classifier.BlockNSFW {
+			break
+		}
+		state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateCensored)
+		generation = "[Blocked by worker's content moderation]"
 	}
 
 	logger.InfoContext(ctx, "Sending job result", "length", len(generation))
