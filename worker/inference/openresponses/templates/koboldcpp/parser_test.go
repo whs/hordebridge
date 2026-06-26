@@ -1,4 +1,4 @@
-package openresponses
+package koboldcpp
 
 import (
 	"testing"
@@ -6,10 +6,17 @@ import (
 	"github.com/alecthomas/assert/v2"
 	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/openai/openai-go/v3/responses"
+	"github.com/whs/hordebridge/aihorde"
+	"github.com/whs/hordebridge/worker/inference/openresponses/templates"
 )
 
 func TestParseKobold(t *testing.T) {
-	out, err := templateParserKoboldCpp("{{[SYSTEM]}}System prompt{{[INPUT]}}User prompt{{[OUTPUT]}}")
+	parser := Parser{}
+
+	out, err := parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("{{[SYSTEM]}}System prompt{{[INPUT]}}User prompt{{[OUTPUT]}}"),
+		StopSequence: []string{"{{[SYSTEM]}}"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -32,7 +39,10 @@ func TestParseKobold(t *testing.T) {
 		},
 	}, out)
 
-	out, err = templateParserKoboldCpp("Cont. prompt{{[INPUT]}}User prompt{{[OUTPUT]}}")
+	out, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("Cont. prompt{{[INPUT]}}User prompt{{[OUTPUT]}}"),
+		StopSequence: []string{"{{[SYSTEM]}}"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -55,7 +65,10 @@ func TestParseKobold(t *testing.T) {
 		},
 	}, out)
 
-	out, err = templateParserKoboldCpp("{{[INPUT]}}User prompt{{[OUTPUT]}}")
+	out, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("{{[INPUT]}}User prompt{{[OUTPUT]}}"),
+		StopSequence: []string{"{{[SYSTEM]}}"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -69,7 +82,10 @@ func TestParseKobold(t *testing.T) {
 		},
 	}, out)
 
-	out, err = templateParserKoboldCpp("{{[INPUT]}}User prompt")
+	out, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("{{[INPUT]}}User prompt"),
+		StopSequence: []string{"{{[SYSTEM]}}"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -83,7 +99,10 @@ func TestParseKobold(t *testing.T) {
 		},
 	}, out)
 
-	out, err = templateParserKoboldCpp("{{[SYSTEM]}}System prompt{{[INPUT]}}User prompt{{[OUTPUT]}}Prefill")
+	out, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("{{[SYSTEM]}}System prompt{{[INPUT]}}User prompt{{[OUTPUT]}}Prefill"),
+		StopSequence: []string{"{{[SYSTEM]}}"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -117,7 +136,12 @@ func TestParseKobold(t *testing.T) {
 }
 
 func TestParseKoboldEndTags(t *testing.T) {
-	out, err := templateParserKoboldCpp("{{[SYSTEM]}}System prompt{{[SYSTEM_END]}}{{[INPUT]}}User prompt{{[INPUT_END]}}{{[OUTPUT]}}")
+	parser := Parser{}
+
+	out, err := parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("{{[SYSTEM]}}System prompt{{[SYSTEM_END]}}{{[INPUT]}}User prompt{{[INPUT_END]}}{{[OUTPUT]}}"),
+		StopSequence: []string{"{{[SYSTEM]}}"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -142,7 +166,12 @@ func TestParseKoboldEndTags(t *testing.T) {
 }
 
 func TestParseKoboldAlpaca(t *testing.T) {
-	out, err := templateParserKoboldCpp("System prompt\n### Instruction:\nUser prompt\n### Response:\n")
+	parser := Parser{}
+
+	out, err := parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("System prompt\n### Instruction:\nUser prompt\n### Response:\n"),
+		StopSequence: []string{"### Instruction:\n"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -166,7 +195,10 @@ func TestParseKoboldAlpaca(t *testing.T) {
 		},
 	}, out)
 
-	out, err = templateParserKoboldCpp("\n### Instruction:\nUser prompt\n### Response:\nPrefill")
+	out, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("\n### Instruction:\nUser prompt\n### Response:\nPrefill"),
+		StopSequence: []string{"\n### Instruction:\n"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -189,7 +221,10 @@ func TestParseKoboldAlpaca(t *testing.T) {
 		},
 	}, out)
 
-	out, err = templateParserKoboldCpp("### Instruction:\nUser prompt")
+	out, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("### Instruction:\nUser prompt"),
+		StopSequence: []string{"### Instruction:\n"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -205,7 +240,12 @@ func TestParseKoboldAlpaca(t *testing.T) {
 }
 
 func TestParseKoboldGemma(t *testing.T) {
-	out, err := templateParserKoboldCpp("<start_of_turn>system\nSystem prompt<end_of_turn>\n<start_of_turn>user\nUser prompt<end_of_turn>\n<start_of_turn>model\nModel")
+	parser := Parser{}
+
+	out, err := parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("<start_of_turn>system\nSystem prompt<end_of_turn>\n<start_of_turn>user\nUser prompt<end_of_turn>\n<start_of_turn>model\nModel"),
+		StopSequence: []string{"<start_of_turn>system\n"},
+	})
 	assert.NoError(t, err)
 	assert.Equal(t, responses.ResponseInputParam{
 		{
@@ -239,12 +279,23 @@ func TestParseKoboldGemma(t *testing.T) {
 }
 
 func TestParseKoboldInvalid(t *testing.T) {
-	_, err := templateParserKoboldCpp("User: Hello\nAssistant:")
-	assert.IsError(t, err, ErrTemplateNoMatch)
+	parser := Parser{}
 
-	_, err = templateParserKoboldCpp("{{[INPUT]}}User prompt{{[SYSTEM]}}")
-	assert.IsError(t, err, ErrTemplateNoMatch)
+	_, err := parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("User: Hello\nAssistant:"),
+		StopSequence: []string{"User: ", "Assistant: "},
+	})
+	assert.IsError(t, err, templates.ErrTemplateNoMatch)
 
-	_, err = templateParserKoboldCpp("{{[INPUT]}}User prompt{{[INPUT]}}")
-	assert.IsError(t, err, ErrTemplateNoMatch)
+	_, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("{{[INPUT]}}User prompt{{[SYSTEM]}}"),
+		StopSequence: []string{"{{[INPUT]}}"},
+	})
+	assert.IsError(t, err, templates.ErrTemplateNoMatch)
+
+	_, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("{{[INPUT]}}User prompt{{[INPUT]}}"),
+		StopSequence: []string{"{{[INPUT]}}"},
+	})
+	assert.IsError(t, err, templates.ErrTemplateNoMatch)
 }

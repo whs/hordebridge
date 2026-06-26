@@ -4,6 +4,7 @@ package koboldcpp
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -14,7 +15,6 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/go-faster/errors"
 	"github.com/openai/openai-go/v3/responses"
 )
 

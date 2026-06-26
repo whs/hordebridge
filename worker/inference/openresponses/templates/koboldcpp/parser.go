@@ -1,25 +1,47 @@
-package openresponses
+package koboldcpp
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
-	"github.com/go-faster/errors"
 	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/openai/openai-go/v3/responses"
-	"github.com/whs/hordebridge/worker/inference/openresponses/templates/koboldcpp"
+	"github.com/whs/hordebridge/aihorde"
+	"github.com/whs/hordebridge/worker/inference/openresponses/templates"
 )
 
-type templateParser = func(input string) (responses.ResponseInputParam, error)
+// stopTags are potential stop tokens
+var stopTags = []string{
+	"{{[INPUT]}}",
+	"{{[OUTPUT]}}",
+	"{{[SYSTEM]}}",
+	"### Instruction:",
+	"### Response:",
+	"<start_of_turn>user",
+	"<start_of_turn>model",
+	"<start_of_turn>system",
+}
 
-var ErrTemplateNoMatch = errors.New("template does not match input")
+type Parser struct {
+}
 
-func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error) {
-	matches, err := koboldcpp.Parse("", []byte(input))
+var _ templates.TemplateParser = Parser{}
+
+func (k Parser) Parse(input *aihorde.ModelPayloadKobold) (responses.ResponseInputParam, error) {
+	// Fast path: Stop sequence should have the special tags
+	hasStopTag := slices.ContainsFunc(input.StopSequence, func(s string) bool {
+		return slices.Contains(stopTags, strings.Trim(s, " \r\n"))
+	})
+	if !hasStopTag {
+		return nil, templates.ErrTemplateNoMatch
+	}
+
+	matches, err := Parse("", []byte(input.Prompt.Value))
 	if err != nil {
 		// peg has no error types
 		if strings.Contains(err.Error(), "no match found") {
-			return nil, ErrTemplateNoMatch
+			return nil, templates.ErrTemplateNoMatch
 		}
 		return nil, err
 	}
@@ -64,7 +86,7 @@ func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error)
 				}
 			}
 			return nil
-		case koboldcpp.EndOfTurn:
+		case EndOfTurn:
 			return nil
 		case responses.EasyInputMessageRole:
 			hasTag = true
@@ -93,7 +115,7 @@ func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error)
 	}
 	if !hasTag {
 		// If there is no tag then we just match the whole string for nothin
-		return nil, ErrTemplateNoMatch
+		return nil, templates.ErrTemplateNoMatch
 	}
 	err = flushLastString()
 
@@ -110,12 +132,10 @@ func templateParserKoboldCpp(input string) (responses.ResponseInputParam, error)
 			}
 		} else {
 			if !lastMessage.Content.OfString.Valid() || len(lastMessage.Content.OfString.String()) == 0 {
-				return nil, fmt.Errorf("last message must be non-empty: %w", ErrTemplateNoMatch)
+				return nil, fmt.Errorf("last message must be non-empty: %w", templates.ErrTemplateNoMatch)
 			}
 		}
 	}
 
 	return out, err
 }
-
-var _ templateParser = templateParserKoboldCpp

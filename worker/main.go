@@ -162,27 +162,23 @@ func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
 			reportable, ok := errors.Into[ReportableError](err)
 			// XXX: Use abortCtx to ensure that if ctx is canceled, this job should be able to send the report
 			if ok {
-				_, sendErrErr := w.aihorde.PostTextJobSubmit(abortCtx, &aihorde.SubmitInputKobold{
+				sendErrErr := w.SubmitJob(abortCtx, &aihorde.SubmitInputKobold{
 					ID:         job.ID.Value,
 					Generation: reportable.PublicError,
 					State:      aihorde.NewOptSubmitInputKoboldState(reportable.Kind),
-				}, aihorde.PostTextJobSubmitParams{
-					Apikey: w.config.HordeAPIKey,
 				})
 				if sendErrErr != nil {
-					w.logger.ErrorContext(ctx, "Failed to send job error. Exiting", "err", sendErrErr)
+					w.logger.ErrorContext(abortCtx, "Failed to send job error. Exiting", "err", sendErrErr, "originalErr", err)
 					return
 				}
 			} else {
-				_, sendErrErr := w.aihorde.PostTextJobSubmit(abortCtx, &aihorde.SubmitInputKobold{
+				sendErrErr := w.SubmitJob(abortCtx, &aihorde.SubmitInputKobold{
 					ID:         job.ID.Value,
 					Generation: "[Worker error]",
 					State:      aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateFaulted),
-				}, aihorde.PostTextJobSubmitParams{
-					Apikey: w.config.HordeAPIKey,
 				})
 				if sendErrErr != nil {
-					w.logger.ErrorContext(ctx, "Failed to send job error. Exiting", "err", sendErrErr)
+					w.logger.ErrorContext(abortCtx, "Failed to send job error. Exiting", "err", sendErrErr, "originalErr", err)
 					return
 				}
 			}
@@ -318,28 +314,41 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 
 	w.submitWg.Go(func() {
 		// Don't use ctx here it will expire
-		logger.InfoContext(parentCtx, "Sending job result", "length", len(generation))
-		submitRes, err := w.aihorde.PostTextJobSubmit(parentCtx, &aihorde.SubmitInputKobold{
+		w.SubmitJobAsync(parentCtx, &aihorde.SubmitInputKobold{
 			ID:          job.ID.Value,
 			Generation:  generation,
 			State:       state,
 			GenMetadata: metadata,
-		}, aihorde.PostTextJobSubmitParams{
-			Apikey: w.config.HordeAPIKey,
 		})
-
-		if err != nil {
-			logger.ErrorContext(parentCtx, "Failed to submit job", "err", err)
-			return
-		}
-
-		switch submitRes.(type) {
-		case *aihorde.GenerationSubmitted:
-			logger.InfoContext(parentCtx, "Job completed")
-		default:
-			logger.WarnContext(parentCtx, "Unknown submission response type", "response", submitRes)
-		}
 	})
 
 	return nil
+}
+
+func (w *Worker) SubmitJob(ctx context.Context, result *aihorde.SubmitInputKobold) error {
+	logger := w.logger.With("jobId", result.ID)
+	logger.DebugContext(ctx, "Submitting job result")
+
+	submitRes, err := w.aihorde.PostTextJobSubmit(ctx, result, aihorde.PostTextJobSubmitParams{
+		Apikey: w.config.HordeAPIKey,
+	})
+
+	if err != nil {
+		logger.ErrorContext(ctx, "Failed to submit job", "err", err, "jobId", result.ID)
+		return err
+	}
+
+	switch submitRes.(type) {
+	case *aihorde.GenerationSubmitted:
+		logger.InfoContext(ctx, "Job completed")
+	default:
+		logger.WarnContext(ctx, "Unknown submission response type", "response", submitRes, "jobId", result.ID)
+	}
+	return nil
+}
+
+func (w *Worker) SubmitJobAsync(ctx context.Context, result *aihorde.SubmitInputKobold) {
+	w.submitWg.Go(func() {
+		w.SubmitJob(ctx, result)
+	})
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"slices"
 	"strings"
 
 	"github.com/go-faster/errors"
@@ -13,19 +12,9 @@ import (
 	"github.com/openai/openai-go/v3/responses"
 	"github.com/whs/hordebridge/aihorde"
 	"github.com/whs/hordebridge/worker/inference"
+	"github.com/whs/hordebridge/worker/inference/openresponses/templates"
+	"github.com/whs/hordebridge/worker/inference/openresponses/templates/koboldcpp"
 )
-
-// stopTags are potential stop tokens
-var stopTags = []string{
-	"{{[INPUT]}}",
-	"{{[OUTPUT]}}",
-	"{{[SYSTEM]}}",
-	"### Instruction:",
-	"### Response:",
-	"<start_of_turn>user",
-	"<start_of_turn>model",
-	"<start_of_turn>system",
-}
 
 type OpenResponsesCompletion struct {
 	client openai.Client
@@ -37,11 +26,18 @@ type ResponsesConfig struct {
 	Model            string
 	AdditionalParams []byte
 	Fallback         inference.TextInference
+	Parsers          []templates.TemplateParser
 }
 
 var _ inference.TextInference = &OpenResponsesCompletion{}
 
 func New(client openai.Client, config ResponsesConfig) inference.TextInference {
+	if len(config.Parsers) == 0 {
+		config.Parsers = []templates.TemplateParser{
+			koboldcpp.Parser{},
+		}
+	}
+
 	return &OpenResponsesCompletion{
 		client: client,
 		config: config,
@@ -55,19 +51,21 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 		return "", fmt.Errorf("no job payload")
 	}
 
-	hasStopTag := slices.ContainsFunc(payload.StopSequence, func(s string) bool {
-		return slices.Contains(stopTags, strings.Trim(s, " \r\n"))
-	})
-	if !hasStopTag {
-		return o.config.Fallback.GenerateText(ctx, job)
+	var parsed responses.ResponseInputParam
+	var err error
+	for _, parser := range o.config.Parsers {
+		parsed, err = parser.Parse(&payload)
+		if errors.Is(err, templates.ErrTemplateNoMatch) {
+			// XXX: Don't forget to preserve last err in this block!
+			continue
+		} else if err != nil {
+			return "", fmt.Errorf("chat template execution failed: %w", err)
+		}
+		break
 	}
-
-	parsed, err := templateParserKoboldCpp(payload.Prompt.Value)
-	if errors.Is(err, ErrTemplateNoMatch) {
+	if errors.Is(err, templates.ErrTemplateNoMatch) {
 		// Fallback when the chat template doesn't match
 		return o.config.Fallback.GenerateText(ctx, job)
-	} else if err != nil {
-		return "", fmt.Errorf("chat template execution failed: %w", err)
 	}
 
 	additionalParams := make([]option.RequestOption, 0)
