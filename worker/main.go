@@ -307,7 +307,7 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 			break
 		}
 		state = aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateCensored)
-		generation = "[Blocked by worker's content moderation]"
+		generation = "[Blocked by worker's content moderation. This worker is SFW-only. Mark risky requests as NSFW to avoid such workers]"
 	case ClassifierResultError:
 		if !w.config.Classifier.FailClose {
 			break
