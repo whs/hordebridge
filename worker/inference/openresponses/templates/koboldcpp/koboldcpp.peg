@@ -11,7 +11,7 @@ type EndOfTurn int
 const EOT EndOfTurn = iota
 }
 
-Prompt = (role:Role / EndOfTurn / message:.)*
+Prompt = Preamble? (role:Role / EndOfTurn / message:.)*
 
 Role = SystemRole / UserRole / AssistantRole
 SystemRole = (
@@ -34,3 +34,7 @@ EndOfTurn = (
 ) { return EOT, nil }
 
 NonCaptureNewLine = "\n"? { return nil, nil }
+
+Preamble = (
+	"Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n"
+) { return nil, nil}

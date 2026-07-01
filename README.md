@@ -30,6 +30,7 @@ The supported chat template tags are:
 
 - KoboldCPP (`{{[SYSTEM]}}, {{[INPUT]}}, {{[OUTPUT]}}`)
 - Alpaca (`### Instruction:\n, ### Response:\n`)
+- Gemma (`<start_of_turn>user`)
 
 Continuation is supported as prefills - the last turn is tagged as "assistant" and the agent is supposed to continue writing
 that turn without creating double assistant turns in a row.

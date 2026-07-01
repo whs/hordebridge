@@ -1,5 +1,7 @@
 package worker
 
+import "time"
+
 type Config struct {
 	BridgeAgent               string   `default:"HordeBridge:1.0:https://github.com/whs/hordebridge"`
 	HordeServer               string   `default:"https://stablehorde.net/api/" help:"AI Horde server"`
@@ -27,13 +29,14 @@ type Config struct {
 }
 
 type ClassifierConfig struct {
-	Server           string  `help:"OpenAI server. Must support tools and responses API"`
-	APIKey           string  `help:"OpenAI API Key"`
-	Model            string  `help:"Model to run classifier"`
-	FailClose        bool    `help:"If the classifier fails, then block all requests" default:"false"`
-	Temperature      float64 `help:"Classifier temperature" default:"0.2"`
-	MaxTokens        int64   `help:"Classifier max tokens" default:"512"`
-	AdditionalParams string  `help:"JSON merge patch of text completion request body"`
+	Server           string        `help:"OpenAI server. Must support tools and responses API"`
+	APIKey           string        `help:"OpenAI API Key"`
+	Model            string        `help:"Model to run classifier"`
+	FailClose        bool          `help:"If the classifier fails, then block all requests" default:"false"`
+	Temperature      float64       `help:"Classifier temperature" default:"0.2"`
+	MaxTokens        int64         `help:"Classifier max tokens" default:"512"`
+	AdditionalParams string        `help:"JSON merge patch of text completion request body"`
+	Timeout          time.Duration `help:"Timeout for the classifier. When timed out, the fail-close option controls whether the request is allowed" default:"30s"`
 
 	BlockNSFW bool `help:"Block NSFW content"`
 	BlockCSAM bool `help:"Block child sexual abuse material"`

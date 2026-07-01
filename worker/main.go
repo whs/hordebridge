@@ -247,7 +247,7 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 	errGroup.Go(func() error {
 		var err error
 
-		logger.InfoContext(errCtx, "Running text generation")
+		logger.InfoContext(errCtx, "Running text generation", "inputLen", len(payload.Prompt.Value))
 		generation, err = w.completion.GenerateText(generationCtx, job)
 
 		if errors.Is(err, errContentClassifier) || errors.Is(err, context.Canceled) {
@@ -260,15 +260,17 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 	if w.config.Classifier.UseClassifier() {
 		errGroup.Go(func() error {
 			logger.InfoContext(errCtx, "Running content classifier")
-			classifiedResult = w.ClassifyContent(errCtx, payload.Prompt.Value, "")
-			logger.InfoContext(errCtx, "Classifier result", "classifierResult", classifiedResult)
+			classifierTimeoutCtx, classifierTimeoutCancel := context.WithTimeout(errCtx, w.config.Classifier.Timeout)
+			defer classifierTimeoutCancel()
+			classifiedResult = w.ClassifyContent(classifierTimeoutCtx, payload.Prompt.Value, "")
+			logger.InfoContext(classifierTimeoutCtx, "Classifier result", "classifierResult", classifiedResult)
 
 			// If the classifier reported one of the blocking result then abort generation early
 			isBlocked := (w.config.Classifier.BlockNSFW && classifiedResult == ClassifierResultNsfw) ||
 				(w.config.Classifier.BlockCSAM && classifiedResult == ClassifierResultCsam) ||
 				(w.config.Classifier.FailClose && classifiedResult == ClassifierResultError)
 			if isBlocked {
-				w.logger.DebugContext(errCtx, "Aborting generation")
+				w.logger.DebugContext(classifierTimeoutCtx, "Aborting generation")
 				generationCtxCancel(errContentClassifier)
 			}
 
@@ -340,7 +342,7 @@ func (w *Worker) SubmitJob(ctx context.Context, result *aihorde.SubmitInputKobol
 
 	switch submitRes.(type) {
 	case *aihorde.GenerationSubmitted:
-		logger.InfoContext(ctx, "Job completed")
+		logger.InfoContext(ctx, "Job completed", "outputLen", len(result.Generation))
 	default:
 		logger.WarnContext(ctx, "Unknown submission response type", "response", submitRes, "jobId", result.ID)
 	}

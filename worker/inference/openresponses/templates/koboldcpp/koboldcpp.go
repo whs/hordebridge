@@ -27,28 +27,40 @@ var g = &grammar{
 		{
 			name: "Prompt",
 			pos:  position{line: 14, col: 1, offset: 156},
-			expr: &zeroOrMoreExpr{
+			expr: &seqExpr{
 				pos: position{line: 14, col: 10, offset: 165},
-				expr: &choiceExpr{
-					pos: position{line: 14, col: 11, offset: 166},
-					alternatives: []any{
-						&labeledExpr{
-							pos:   position{line: 14, col: 11, offset: 166},
-							label: "role",
-							expr: &ruleRefExpr{
-								pos:  position{line: 14, col: 16, offset: 171},
-								name: "Role",
-							},
+				exprs: []any{
+					&zeroOrOneExpr{
+						pos: position{line: 14, col: 10, offset: 165},
+						expr: &ruleRefExpr{
+							pos:  position{line: 14, col: 10, offset: 165},
+							name: "Preamble",
 						},
-						&ruleRefExpr{
-							pos:  position{line: 14, col: 23, offset: 178},
-							name: "EndOfTurn",
-						},
-						&labeledExpr{
-							pos:   position{line: 14, col: 35, offset: 190},
-							label: "message",
-							expr: &anyMatcher{
-								line: 14, col: 43, offset: 198,
+					},
+					&zeroOrMoreExpr{
+						pos: position{line: 14, col: 20, offset: 175},
+						expr: &choiceExpr{
+							pos: position{line: 14, col: 21, offset: 176},
+							alternatives: []any{
+								&labeledExpr{
+									pos:   position{line: 14, col: 21, offset: 176},
+									label: "role",
+									expr: &ruleRefExpr{
+										pos:  position{line: 14, col: 26, offset: 181},
+										name: "Role",
+									},
+								},
+								&ruleRefExpr{
+									pos:  position{line: 14, col: 33, offset: 188},
+									name: "EndOfTurn",
+								},
+								&labeledExpr{
+									pos:   position{line: 14, col: 45, offset: 200},
+									label: "message",
+									expr: &anyMatcher{
+										line: 14, col: 53, offset: 208,
+									},
+								},
 							},
 						},
 					},
@@ -57,20 +69,20 @@ var g = &grammar{
 		},
 		{
 			name: "Role",
-			pos:  position{line: 16, col: 1, offset: 203},
+			pos:  position{line: 16, col: 1, offset: 213},
 			expr: &choiceExpr{
-				pos: position{line: 16, col: 8, offset: 210},
+				pos: position{line: 16, col: 8, offset: 220},
 				alternatives: []any{
 					&ruleRefExpr{
-						pos:  position{line: 16, col: 8, offset: 210},
+						pos:  position{line: 16, col: 8, offset: 220},
 						name: "SystemRole",
 					},
 					&ruleRefExpr{
-						pos:  position{line: 16, col: 21, offset: 223},
+						pos:  position{line: 16, col: 21, offset: 233},
 						name: "UserRole",
 					},
 					&ruleRefExpr{
-						pos:  position{line: 16, col: 32, offset: 234},
+						pos:  position{line: 16, col: 32, offset: 244},
 						name: "AssistantRole",
 					},
 				},
@@ -78,28 +90,28 @@ var g = &grammar{
 		},
 		{
 			name: "SystemRole",
-			pos:  position{line: 17, col: 1, offset: 248},
+			pos:  position{line: 17, col: 1, offset: 258},
 			expr: &actionExpr{
-				pos: position{line: 17, col: 14, offset: 261},
+				pos: position{line: 17, col: 14, offset: 271},
 				run: (*parser).callonSystemRole1,
 				expr: &choiceExpr{
-					pos: position{line: 18, col: 2, offset: 264},
+					pos: position{line: 18, col: 2, offset: 274},
 					alternatives: []any{
 						&litMatcher{
-							pos:        position{line: 18, col: 2, offset: 264},
+							pos:        position{line: 18, col: 2, offset: 274},
 							val:        "{{[SYSTEM]}}",
 							ignoreCase: false,
 							want:       "\"{{[SYSTEM]}}\"",
 						},
 						&seqExpr{
-							pos: position{line: 19, col: 4, offset: 282},
+							pos: position{line: 19, col: 4, offset: 292},
 							exprs: []any{
 								&ruleRefExpr{
-									pos:  position{line: 19, col: 4, offset: 282},
+									pos:  position{line: 19, col: 4, offset: 292},
 									name: "NonCaptureNewLine",
 								},
 								&litMatcher{
-									pos:        position{line: 19, col: 22, offset: 300},
+									pos:        position{line: 19, col: 22, offset: 310},
 									val:        "<start_of_turn>system\n",
 									ignoreCase: false,
 									want:       "\"<start_of_turn>system\\n\"",
@@ -112,28 +124,28 @@ var g = &grammar{
 		},
 		{
 			name: "UserRole",
-			pos:  position{line: 21, col: 1, offset: 381},
+			pos:  position{line: 21, col: 1, offset: 391},
 			expr: &actionExpr{
-				pos: position{line: 21, col: 12, offset: 392},
+				pos: position{line: 21, col: 12, offset: 402},
 				run: (*parser).callonUserRole1,
 				expr: &choiceExpr{
-					pos: position{line: 22, col: 2, offset: 395},
+					pos: position{line: 22, col: 2, offset: 405},
 					alternatives: []any{
 						&litMatcher{
-							pos:        position{line: 22, col: 2, offset: 395},
+							pos:        position{line: 22, col: 2, offset: 405},
 							val:        "{{[INPUT]}}",
 							ignoreCase: false,
 							want:       "\"{{[INPUT]}}\"",
 						},
 						&seqExpr{
-							pos: position{line: 23, col: 4, offset: 412},
+							pos: position{line: 23, col: 4, offset: 422},
 							exprs: []any{
 								&ruleRefExpr{
-									pos:  position{line: 23, col: 4, offset: 412},
+									pos:  position{line: 23, col: 4, offset: 422},
 									name: "NonCaptureNewLine",
 								},
 								&litMatcher{
-									pos:        position{line: 23, col: 22, offset: 430},
+									pos:        position{line: 23, col: 22, offset: 440},
 									val:        "### Instruction:\n",
 									ignoreCase: false,
 									want:       "\"### Instruction:\\n\"",
@@ -141,14 +153,14 @@ var g = &grammar{
 							},
 						},
 						&seqExpr{
-							pos: position{line: 24, col: 4, offset: 454},
+							pos: position{line: 24, col: 4, offset: 464},
 							exprs: []any{
 								&ruleRefExpr{
-									pos:  position{line: 24, col: 4, offset: 454},
+									pos:  position{line: 24, col: 4, offset: 464},
 									name: "NonCaptureNewLine",
 								},
 								&litMatcher{
-									pos:        position{line: 24, col: 22, offset: 472},
+									pos:        position{line: 24, col: 22, offset: 482},
 									val:        "<start_of_turn>user\n",
 									ignoreCase: false,
 									want:       "\"<start_of_turn>user\\n\"",
@@ -161,28 +173,28 @@ var g = &grammar{
 		},
 		{
 			name: "AssistantRole",
-			pos:  position{line: 26, col: 1, offset: 549},
+			pos:  position{line: 26, col: 1, offset: 559},
 			expr: &actionExpr{
-				pos: position{line: 26, col: 17, offset: 565},
+				pos: position{line: 26, col: 17, offset: 575},
 				run: (*parser).callonAssistantRole1,
 				expr: &choiceExpr{
-					pos: position{line: 27, col: 2, offset: 568},
+					pos: position{line: 27, col: 2, offset: 578},
 					alternatives: []any{
 						&litMatcher{
-							pos:        position{line: 27, col: 2, offset: 568},
+							pos:        position{line: 27, col: 2, offset: 578},
 							val:        "{{[OUTPUT]}}",
 							ignoreCase: false,
 							want:       "\"{{[OUTPUT]}}\"",
 						},
 						&seqExpr{
-							pos: position{line: 28, col: 4, offset: 586},
+							pos: position{line: 28, col: 4, offset: 596},
 							exprs: []any{
 								&ruleRefExpr{
-									pos:  position{line: 28, col: 4, offset: 586},
+									pos:  position{line: 28, col: 4, offset: 596},
 									name: "NonCaptureNewLine",
 								},
 								&litMatcher{
-									pos:        position{line: 28, col: 22, offset: 604},
+									pos:        position{line: 28, col: 22, offset: 614},
 									val:        "### Response:\n",
 									ignoreCase: false,
 									want:       "\"### Response:\\n\"",
@@ -190,14 +202,14 @@ var g = &grammar{
 							},
 						},
 						&seqExpr{
-							pos: position{line: 29, col: 4, offset: 625},
+							pos: position{line: 29, col: 4, offset: 635},
 							exprs: []any{
 								&ruleRefExpr{
-									pos:  position{line: 29, col: 4, offset: 625},
+									pos:  position{line: 29, col: 4, offset: 635},
 									name: "NonCaptureNewLine",
 								},
 								&litMatcher{
-									pos:        position{line: 29, col: 22, offset: 643},
+									pos:        position{line: 29, col: 22, offset: 653},
 									val:        "<start_of_turn>model\n",
 									ignoreCase: false,
 									want:       "\"<start_of_turn>model\\n\"",
@@ -210,40 +222,40 @@ var g = &grammar{
 		},
 		{
 			name: "EndOfTurn",
-			pos:  position{line: 32, col: 1, offset: 727},
+			pos:  position{line: 32, col: 1, offset: 737},
 			expr: &actionExpr{
-				pos: position{line: 32, col: 13, offset: 739},
+				pos: position{line: 32, col: 13, offset: 749},
 				run: (*parser).callonEndOfTurn1,
 				expr: &seqExpr{
-					pos: position{line: 33, col: 2, offset: 742},
+					pos: position{line: 33, col: 2, offset: 752},
 					exprs: []any{
 						&ruleRefExpr{
-							pos:  position{line: 33, col: 2, offset: 742},
+							pos:  position{line: 33, col: 2, offset: 752},
 							name: "NonCaptureNewLine",
 						},
 						&choiceExpr{
-							pos: position{line: 33, col: 21, offset: 761},
+							pos: position{line: 33, col: 21, offset: 771},
 							alternatives: []any{
 								&litMatcher{
-									pos:        position{line: 33, col: 21, offset: 761},
+									pos:        position{line: 33, col: 21, offset: 771},
 									val:        "{{[SYSTEM_END]}}",
 									ignoreCase: false,
 									want:       "\"{{[SYSTEM_END]}}\"",
 								},
 								&litMatcher{
-									pos:        position{line: 33, col: 42, offset: 782},
+									pos:        position{line: 33, col: 42, offset: 792},
 									val:        "{{[INPUT_END]}}",
 									ignoreCase: false,
 									want:       "\"{{[INPUT_END]}}\"",
 								},
 								&litMatcher{
-									pos:        position{line: 33, col: 62, offset: 802},
+									pos:        position{line: 33, col: 62, offset: 812},
 									val:        "{{[OUTPUT_END]}}",
 									ignoreCase: false,
 									want:       "\"{{[OUTPUT_END]}}\"",
 								},
 								&litMatcher{
-									pos:        position{line: 33, col: 83, offset: 823},
+									pos:        position{line: 33, col: 83, offset: 833},
 									val:        "<end_of_turn>",
 									ignoreCase: false,
 									want:       "\"<end_of_turn>\"",
@@ -251,7 +263,7 @@ var g = &grammar{
 							},
 						},
 						&ruleRefExpr{
-							pos:  position{line: 33, col: 100, offset: 840},
+							pos:  position{line: 33, col: 100, offset: 850},
 							name: "NonCaptureNewLine",
 						},
 					},
@@ -260,18 +272,32 @@ var g = &grammar{
 		},
 		{
 			name: "NonCaptureNewLine",
-			pos:  position{line: 36, col: 1, offset: 881},
+			pos:  position{line: 36, col: 1, offset: 891},
 			expr: &actionExpr{
-				pos: position{line: 36, col: 21, offset: 901},
+				pos: position{line: 36, col: 21, offset: 911},
 				run: (*parser).callonNonCaptureNewLine1,
 				expr: &zeroOrOneExpr{
-					pos: position{line: 36, col: 21, offset: 901},
+					pos: position{line: 36, col: 21, offset: 911},
 					expr: &litMatcher{
-						pos:        position{line: 36, col: 21, offset: 901},
+						pos:        position{line: 36, col: 21, offset: 911},
 						val:        "\n",
 						ignoreCase: false,
 						want:       "\"\\n\"",
 					},
+				},
+			},
+		},
+		{
+			name: "Preamble",
+			pos:  position{line: 38, col: 1, offset: 938},
+			expr: &actionExpr{
+				pos: position{line: 38, col: 12, offset: 949},
+				run: (*parser).callonPreamble1,
+				expr: &litMatcher{
+					pos:        position{line: 39, col: 2, offset: 952},
+					val:        "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n",
+					ignoreCase: false,
+					want:       "\"Below is an instruction that describes a task. Write a response that appropriately completes the request.\\n\\n\"",
 				},
 			},
 		},
@@ -326,6 +352,16 @@ func (p *parser) callonNonCaptureNewLine1() (any, error) {
 	stack := p.vstack[len(p.vstack)-1]
 	_ = stack
 	return p.cur.onNonCaptureNewLine1()
+}
+
+func (c *current) onPreamble1() (any, error) {
+	return nil, nil
+}
+
+func (p *parser) callonPreamble1() (any, error) {
+	stack := p.vstack[len(p.vstack)-1]
+	_ = stack
+	return p.cur.onPreamble1()
 }
 
 var (

@@ -237,6 +237,23 @@ func TestParseKoboldAlpaca(t *testing.T) {
 			},
 		},
 	}, out)
+
+	out, err = parser.Parse(&aihorde.ModelPayloadKobold{
+		Prompt:       aihorde.NewOptString("Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n### Instruction:\nUser prompt\n### Response:\n"),
+		StopSequence: []string{"### Instruction:\n"},
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, responses.ResponseInputParam{
+		{
+			OfMessage: &responses.EasyInputMessageParam{
+				Content: responses.EasyInputMessageContentUnionParam{
+					OfString: param.NewOpt("User prompt"),
+				},
+				Role: responses.EasyInputMessageRoleUser,
+				Type: responses.EasyInputMessageTypeMessage,
+			},
+		},
+	}, out)
 }
 
 func TestParseKoboldGemma(t *testing.T) {
