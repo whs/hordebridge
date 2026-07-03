@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"sync"
 	"time"
 
@@ -14,6 +15,13 @@ import (
 	"github.com/whs/hordebridge/aihorde"
 	"github.com/whs/hordebridge/worker/inference"
 	"github.com/whs/hordebridge/worker/inference/openresponses"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/semconv/v1.41.0/messagingconv"
+	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -27,15 +35,29 @@ type Worker struct {
 	openaiClassifier openai.Client
 	completion       inference.TextInference
 	submitWg         sync.WaitGroup
+	tracer           trace.Tracer
+
+	metricClientConsumedMessages messagingconv.ClientConsumedMessages
+	metricJobProcessingDuration  messagingconv.ProcessDuration
+	metricInputLength            metric.Int64Counter
+	metricOutputLength           metric.Int64Counter
+	metricClassifierResult       metric.Int64Counter
+	metricClassifierDuration     metric.Float64Histogram
+	metricKudos                  metric.Float64Counter
 }
 
 func NewWorker(config Config) (*Worker, error) {
-	aihordeClient, err := aihorde.NewClient(config.HordeServer)
+	httpTransport := otelhttp.NewTransport(nil)
+	httpClient := &http.Client{
+		Transport: httpTransport,
+	}
+
+	aihordeClient, err := aihorde.NewClient(config.HordeServer, aihorde.WithClient(httpClient))
 	if err != nil {
 		return nil, err
 	}
 
-	openaiClient := openai.NewClient(option.WithAPIKey(config.OpenaiAPIKey), option.WithBaseURL(config.OpenaiServer))
+	openaiClient := openai.NewClient(option.WithAPIKey(config.OpenaiAPIKey), option.WithBaseURL(config.OpenaiServer), option.WithHTTPClient(httpClient))
 
 	if len(config.AdditionalParams) > 0 {
 		if !json.Valid([]byte(config.AdditionalParams)) {
@@ -59,7 +81,7 @@ func NewWorker(config Config) (*Worker, error) {
 		if config.Classifier.Model == "" {
 			config.Classifier.Server = config.OpenaiModel
 		}
-		openaiClassifier = openai.NewClient(option.WithAPIKey(config.Classifier.APIKey), option.WithBaseURL(config.Classifier.Server))
+		openaiClassifier = openai.NewClient(option.WithAPIKey(config.Classifier.APIKey), option.WithBaseURL(config.Classifier.Server), option.WithHTTPClient(httpClient))
 
 		if config.Classifier.BlockNSFW && config.NSFW {
 			return nil, fmt.Errorf("--nsfw is allowed, but --classifier-block-nsfw is on")
@@ -67,28 +89,41 @@ func NewWorker(config Config) (*Worker, error) {
 	}
 
 	var completion inference.TextInference
-	completion = inference.NewOpenAICompletion(openaiClient, inference.OpenAICompletionConfig{
+	completion, err = inference.NewOpenAICompletion(openaiClient, inference.OpenAICompletionConfig{
 		Model:            config.OpenaiModel,
 		AdditionalParams: []byte(config.AdditionalParams),
 	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create openai client: %w", err)
+	}
 
 	if config.ResponsesAPI {
 		slog.Info("Creating worker with responses API parsing")
-		completion = openresponses.New(openaiClient, openresponses.ResponsesConfig{
+		completion, err = openresponses.New(openaiClient, openresponses.ResponsesConfig{
 			Model:            config.OpenaiModel,
 			Fallback:         completion,
 			AdditionalParams: []byte(config.ResponsesAdditionalParams),
 		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create openresponses client: %w", err)
+		}
 	}
 
-	return &Worker{
+	w := &Worker{
 		config:           config,
 		logger:           slog.Default().With("module", "worker"),
 		aihorde:          aihordeClient,
 		openai:           openaiClient,
 		openaiClassifier: openaiClassifier,
 		completion:       completion,
-	}, nil
+		tracer:           otel.Tracer(otelPackageName),
+	}
+	err = w.initOtel()
+	if err != nil {
+		return nil, err
+	}
+
+	return w, nil
 }
 
 // Start the main worker loop
@@ -155,40 +190,65 @@ func (w *Worker) Start(ctx context.Context, abortCtx context.Context) {
 
 		// Got a job!
 		waitCount = 0
-		err = w.ProcessJob(ctx, job)
+		jobCtx, jobSpan := w.tracer.Start(ctx, "consume TextJob", trace.WithSpanKind(trace.SpanKindConsumer), trace.WithAttributes(
+			attribute.String("messaging.message.id", job.ID.Value),
+		))
+
+		err = w.ProcessJob(jobCtx, job)
 		if err != nil {
-			w.logger.ErrorContext(ctx, "Failed to process job. Sending error", "err", err)
+			jobSpan.RecordError(err)
+			jobSpan.SetStatus(codes.Error, err.Error())
+			_, jobErrSpan := w.tracer.Start(jobCtx, "Send error")
+			jobAbortCtx := trace.ContextWithSpan(abortCtx, jobErrSpan)
+			w.logger.ErrorContext(jobAbortCtx, "Failed to process job. Sending error", "err", err)
 
 			reportable, ok := errors.Into[ReportableError](err)
 			// XXX: Use abortCtx to ensure that if ctx is canceled, this job should be able to send the report
 			if ok {
-				sendErrErr := w.SubmitJob(abortCtx, &aihorde.SubmitInputKobold{
+				jobErrSpan.SetAttributes(keyKoboldState.String(string(reportable.Kind)))
+				sendErrErr := w.SubmitJob(jobAbortCtx, &aihorde.SubmitInputKobold{
 					ID:         job.ID.Value,
 					Generation: reportable.PublicError,
 					State:      aihorde.NewOptSubmitInputKoboldState(reportable.Kind),
 				})
 				if sendErrErr != nil {
-					w.logger.ErrorContext(abortCtx, "Failed to send job error. Exiting", "err", sendErrErr, "originalErr", err)
+					w.logger.ErrorContext(jobAbortCtx, "Failed to send job error. Exiting", "err", sendErrErr, "originalErr", err)
+					jobErrSpan.End()
+					jobSpan.End()
 					return
 				}
 			} else {
-				sendErrErr := w.SubmitJob(abortCtx, &aihorde.SubmitInputKobold{
+				jobErrSpan.SetAttributes(keyKoboldState.String(string(aihorde.SubmitInputKoboldStateFaulted)))
+				sendErrErr := w.SubmitJob(jobAbortCtx, &aihorde.SubmitInputKobold{
 					ID:         job.ID.Value,
 					Generation: "[Worker error]",
 					State:      aihorde.NewOptSubmitInputKoboldState(aihorde.SubmitInputKoboldStateFaulted),
 				})
 				if sendErrErr != nil {
-					w.logger.ErrorContext(abortCtx, "Failed to send job error. Exiting", "err", sendErrErr, "originalErr", err)
+					w.logger.ErrorContext(jobAbortCtx, "Failed to send job error. Exiting", "err", sendErrErr, "originalErr", err)
+					jobErrSpan.End()
+					jobSpan.End()
 					return
 				}
 			}
 
 			if onError(err) {
+				jobErrSpan.End()
+				jobSpan.End()
 				return
 			}
+			jobErrSpan.End()
+			jobSpan.End()
 			continue
+		} else {
+			w.metricClientConsumedMessages.Add(jobCtx, 1, "TextJob", messagingSystemHorde,
+				w.metricClientConsumedMessages.AttrConsumerGroupName(w.config.WorkerName),
+				w.metricClientConsumedMessages.AttrDestinationName(w.config.HordeModel),
+			)
+			jobSpan.SetStatus(codes.Ok, "")
 		}
 
+		jobSpan.End()
 		sleep(100 * time.Millisecond)
 		errorCount = 0
 	}
@@ -224,6 +284,7 @@ func (w *Worker) GetJob(ctx context.Context) (*aihorde.GenerationPayloadKobold, 
 
 func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPayloadKobold) error {
 	logger := w.logger.With("jobId", job.ID.Value)
+	span := trace.SpanFromContext(parentCtx)
 
 	ctx, cancel := context.WithTimeout(parentCtx, time.Duration(job.TTL.Or(60*60))*time.Second)
 	defer cancel()
@@ -233,9 +294,14 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		return fmt.Errorf("no job payload")
 	}
 
+	w.metricInputLength.Add(ctx, int64(len(payload.Prompt.Value)))
+	span.AddEvent("gen_ai.client.inference.operation.details", trace.WithAttributes(inputToEventAttr(&payload)...))
+
 	if maxLength, ok := payload.MaxLength.Get(); ok && maxLength > w.config.MaxLength {
-		return NewReportableError(errors.New("max_length validation error"), aihorde.SubmitInputKoboldStateFaulted, "Requested max length %d > allowed %d", maxLength, w.config.MaxLength)
+		logger.InfoContext(ctx, "Truncating max_length", "original", maxLength, "new", w.config.MaxLength)
+		payload.MaxLength.Value = w.config.MaxLength
 	}
+	// TODO: Truncate input to context window (max_context_length)
 
 	var generation string
 	var classifiedResult ClassifierResult
@@ -248,12 +314,26 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 		var err error
 
 		logger.InfoContext(errCtx, "Running text generation", "inputLen", len(payload.Prompt.Value))
-		generation, err = w.completion.GenerateText(generationCtx, job)
+		generateTextCtx, generateTextSpan := w.tracer.Start(generationCtx, "GenerateText", trace.WithAttributes(keyInputLength.Int(len(payload.Prompt.Value))))
+		defer generateTextSpan.End()
+
+		start := time.Now()
+		generation, err = w.completion.GenerateText(generateTextCtx, job)
+		finish := time.Since(start)
+		w.metricClassifierDuration.Record(generateTextCtx, finish.Seconds())
+		w.metricOutputLength.Add(generationCtx, int64(len(generation)))
 
 		if errors.Is(err, errContentClassifier) || errors.Is(err, context.Canceled) {
+			generateTextSpan.SetStatus(codes.Error, err.Error())
 			return nil
 		}
 
+		generateTextSpan.RecordError(err)
+		if err != nil {
+			generateTextSpan.SetStatus(codes.Error, err.Error())
+		} else {
+			generateTextSpan.SetStatus(codes.Ok, "")
+		}
 		return err
 	})
 
@@ -262,16 +342,30 @@ func (w *Worker) ProcessJob(parentCtx context.Context, job *aihorde.GenerationPa
 			logger.InfoContext(errCtx, "Running content classifier")
 			classifierTimeoutCtx, classifierTimeoutCancel := context.WithTimeout(errCtx, w.config.Classifier.Timeout)
 			defer classifierTimeoutCancel()
-			classifiedResult = w.ClassifyContent(classifierTimeoutCtx, payload.Prompt.Value, "")
-			logger.InfoContext(classifierTimeoutCtx, "Classifier result", "classifierResult", classifiedResult)
+
+			classifierCtx, classifierSpan := w.tracer.Start(classifierTimeoutCtx, "ClassifyContent", trace.WithAttributes(keyInputLength.Int(len(payload.Prompt.Value))))
+			defer classifierSpan.End()
+
+			start := time.Now()
+			classifiedResult = w.ClassifyContent(classifierCtx, payload.Prompt.Value, "")
+			finish := time.Since(start)
+
+			logger.InfoContext(classifierCtx, "Classifier result", "classifierResult", classifiedResult)
+			classifierSpan.SetAttributes(keyClassifierResult.String(string(classifiedResult)))
+			w.metricClassifierResult.Add(classifierCtx, 1, metric.WithAttributes(keyClassifierResult.String(string(classifiedResult))))
+			w.metricClassifierDuration.Record(classifierCtx, finish.Seconds())
+			classifierSpan.SetStatus(codes.Ok, "")
 
 			// If the classifier reported one of the blocking result then abort generation early
 			isBlocked := (w.config.Classifier.BlockNSFW && classifiedResult == ClassifierResultNsfw) ||
 				(w.config.Classifier.BlockCSAM && classifiedResult == ClassifierResultCsam) ||
 				(w.config.Classifier.FailClose && classifiedResult == ClassifierResultError)
 			if isBlocked {
-				w.logger.DebugContext(classifierTimeoutCtx, "Aborting generation")
+				w.logger.DebugContext(classifierCtx, "Aborting generation")
 				generationCtxCancel(errContentClassifier)
+				classifierSpan.SetAttributes(keyClassifierBlocked.Bool(true))
+			} else {
+				classifierSpan.SetAttributes(keyClassifierBlocked.Bool(false))
 			}
 
 			return nil
@@ -331,22 +425,33 @@ func (w *Worker) SubmitJob(ctx context.Context, result *aihorde.SubmitInputKobol
 	logger := w.logger.With("jobId", result.ID)
 	logger.DebugContext(ctx, "Submitting job result")
 
-	submitRes, err := w.aihorde.PostTextJobSubmit(ctx, result, aihorde.PostTextJobSubmitParams{
+	submitJobCtx, submitJobSpan := w.tracer.Start(ctx, "SubmitJob")
+	defer submitJobSpan.End()
+
+	submitRes, err := w.aihorde.PostTextJobSubmit(submitJobCtx, result, aihorde.PostTextJobSubmitParams{
 		Apikey: w.config.HordeAPIKey,
 	})
 
 	if err != nil {
 		logger.ErrorContext(ctx, "Failed to submit job", "err", err, "jobId", result.ID)
+		submitJobSpan.RecordError(err)
+		submitJobSpan.SetStatus(codes.Error, err.Error())
 		return err
 	}
 
-	switch submitRes.(type) {
+	switch res := submitRes.(type) {
 	case *aihorde.GenerationSubmitted:
-		logger.InfoContext(ctx, "Job completed", "outputLen", len(result.Generation))
+		logger.InfoContext(submitJobCtx, "Job completed", "outputLen", len(result.Generation))
+		w.metricKudos.Add(submitJobCtx, res.Reward.Value)
+		submitJobSpan.SetStatus(codes.Ok, "")
+		return nil
 	default:
-		logger.WarnContext(ctx, "Unknown submission response type", "response", submitRes, "jobId", result.ID)
+		err = fmt.Errorf("unknown submission response type %+v", submitRes)
+		submitJobSpan.RecordError(err)
+		submitJobSpan.SetStatus(codes.Error, err.Error())
+		logger.WarnContext(submitJobCtx, "Unknown submission response type", "response", submitRes, "jobId", result.ID)
+		return err
 	}
-	return nil
 }
 
 func (w *Worker) SubmitJobAsync(ctx context.Context, result *aihorde.SubmitInputKobold) {

@@ -14,12 +14,21 @@ import (
 	"github.com/whs/hordebridge/worker/inference"
 	"github.com/whs/hordebridge/worker/inference/openresponses/templates"
 	"github.com/whs/hordebridge/worker/inference/openresponses/templates/koboldcpp"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/semconv/v1.41.0/genaiconv"
 )
+
+var keyUseOpenResponses = attribute.Key("openresponses")
 
 type OpenResponsesCompletion struct {
 	client openai.Client
 	config ResponsesConfig
 	logger *slog.Logger
+
+	metricResponses  metric.Int64Counter
+	metricTokenUsage genaiconv.ClientTokenUsage
 }
 
 type ResponsesConfig struct {
@@ -31,18 +40,30 @@ type ResponsesConfig struct {
 
 var _ inference.TextInference = &OpenResponsesCompletion{}
 
-func New(client openai.Client, config ResponsesConfig) inference.TextInference {
+func New(client openai.Client, config ResponsesConfig) (inference.TextInference, error) {
 	if len(config.Parsers) == 0 {
 		config.Parsers = []templates.TemplateParser{
 			koboldcpp.Parser{},
 		}
 	}
 
-	return &OpenResponsesCompletion{
-		client: client,
-		config: config,
-		logger: slog.Default().With("module", "openresponses"),
+	meter := otel.Meter("whs.in.th/hordebridge")
+	metricResponses, err := meter.Int64Counter("openresponses.count", metric.WithDescription("Number of requests using/not using OpenResponses conversion"), metric.WithUnit("{count}"))
+	if err != nil {
+		return nil, err
 	}
+	metricTokenUsage, err := genaiconv.NewClientTokenUsage(meter)
+	if err != nil {
+		return nil, err
+	}
+
+	return &OpenResponsesCompletion{
+		client:           client,
+		config:           config,
+		logger:           slog.Default().With("module", "openresponses"),
+		metricResponses:  metricResponses,
+		metricTokenUsage: metricTokenUsage,
+	}, nil
 }
 
 func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde.GenerationPayloadKobold) (string, error) {
@@ -64,9 +85,11 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 		break
 	}
 	if errors.Is(err, templates.ErrTemplateNoMatch) {
+		o.metricResponses.Add(ctx, 1, metric.WithAttributes(keyUseOpenResponses.Bool(false)))
 		// Fallback when the chat template doesn't match
 		return o.config.Fallback.GenerateText(ctx, job)
 	}
+	o.metricResponses.Add(ctx, 1, metric.WithAttributes(keyUseOpenResponses.Bool(true)))
 
 	additionalParams := make([]option.RequestOption, 0)
 	// https://github.com/Haidra-Org/AI-Horde-Worker/blob/d0bacd83f996550d934c105ea25ac7a0e0fb380e/worker/jobs/scribe.py#L78
@@ -112,6 +135,10 @@ func (o *OpenResponsesCompletion) GenerateText(ctx context.Context, job *aihorde
 	if err != nil {
 		return "", fmt.Errorf("openai error: %w", err)
 	}
+
+	o.metricTokenUsage.Record(ctx, resp.Usage.InputTokens, genaiconv.OperationNameChat, "", genaiconv.TokenTypeInput, o.metricTokenUsage.AttrRequestModel(o.config.Model), o.metricTokenUsage.AttrResponseModel(resp.Model))
+	o.metricTokenUsage.Record(ctx, resp.Usage.OutputTokens, genaiconv.OperationNameChat, "", genaiconv.TokenTypeOutput, o.metricTokenUsage.AttrRequestModel(o.config.Model), o.metricTokenUsage.AttrResponseModel(resp.Model))
+	o.metricTokenUsage.Record(ctx, resp.Usage.OutputTokensDetails.ReasoningTokens, genaiconv.OperationNameChat, "", "reasoning", o.metricTokenUsage.AttrRequestModel(o.config.Model), o.metricTokenUsage.AttrResponseModel(resp.Model))
 
 	out := resp.OutputText()
 

@@ -4,7 +4,7 @@ import "time"
 
 type Config struct {
 	BridgeAgent               string   `default:"HordeBridge:1.0:https://github.com/whs/hordebridge"`
-	HordeServer               string   `default:"https://stablehorde.net/api/" help:"AI Horde server"`
+	HordeServer               string   `default:"https://aihorde.net/api/" help:"AI Horde server"`
 	HordeAPIKey               string   `required:""`
 	PriorityUsernames         []string `help:"List of users who have priority with this worker"`
 	NSFW                      bool     `help:"Allow NSFW generation" default:"true" negatable:""`

@@ -8,11 +8,15 @@ import (
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/whs/hordebridge/aihorde"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/semconv/v1.41.0/genaiconv"
 )
 
 type OpenAITextCompletion struct {
 	client openai.Client
 	config OpenAICompletionConfig
+
+	metricTokenUsage genaiconv.ClientTokenUsage
 }
 
 type OpenAICompletionConfig struct {
@@ -22,11 +26,18 @@ type OpenAICompletionConfig struct {
 
 var _ TextInference = &OpenAITextCompletion{}
 
-func NewOpenAICompletion(client openai.Client, config OpenAICompletionConfig) TextInference {
-	return &OpenAITextCompletion{
-		client: client,
-		config: config,
+func NewOpenAICompletion(client openai.Client, config OpenAICompletionConfig) (TextInference, error) {
+	meter := otel.Meter("whs.in.th/hordebridge")
+	metricTokenUsage, err := genaiconv.NewClientTokenUsage(meter)
+	if err != nil {
+		return nil, err
 	}
+
+	return &OpenAITextCompletion{
+		client:           client,
+		config:           config,
+		metricTokenUsage: metricTokenUsage,
+	}, nil
 }
 
 func (o *OpenAITextCompletion) GenerateText(ctx context.Context, job *aihorde.GenerationPayloadKobold) (string, error) {
@@ -81,6 +92,9 @@ func (o *OpenAITextCompletion) GenerateText(ctx context.Context, job *aihorde.Ge
 	if err != nil {
 		return "", fmt.Errorf("openai error: %w", err)
 	}
+
+	o.metricTokenUsage.Record(ctx, resp.Usage.PromptTokens, genaiconv.OperationNameTextCompletion, "", genaiconv.TokenTypeInput, o.metricTokenUsage.AttrRequestModel(o.config.Model), o.metricTokenUsage.AttrResponseModel(resp.Model))
+	o.metricTokenUsage.Record(ctx, resp.Usage.CompletionTokens, genaiconv.OperationNameTextCompletion, "", genaiconv.TokenTypeOutput, o.metricTokenUsage.AttrRequestModel(o.config.Model), o.metricTokenUsage.AttrResponseModel(resp.Model))
 
 	if len(resp.Choices) == 0 {
 		return "", fmt.Errorf("openai returned no choices")
