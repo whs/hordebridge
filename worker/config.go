@@ -16,6 +16,8 @@ type Config struct {
 	AdditionalParams          string   `help:"JSON merge patch of text completion request body"`
 	ResponsesAPI              bool     `help:"Try to parse chat template and use Responses API instead of text completion" default:"false"`
 	ResponsesAdditionalParams string   `help:"JSON merge patch of responses request body"`
+	ChatAPI                   bool     `help:"Use chat completion API to emulate text completion (should only be used when text completion is not supported)" default:"false"`
+	ChatAPIPrompt             string   `help:"Override chat completion prompt" default:""`
 
 	OpenaiServer string `help:"OpenAI server" required:""`
 	OpenaiAPIKey string `help:"OpenAI API Key"`

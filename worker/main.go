@@ -89,12 +89,26 @@ func NewWorker(config Config) (*Worker, error) {
 	}
 
 	var completion inference.TextInference
-	completion, err = inference.NewOpenAICompletion(openaiClient, inference.OpenAICompletionConfig{
-		Model:            config.OpenaiModel,
-		AdditionalParams: []byte(config.AdditionalParams),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create openai client: %w", err)
+
+	if config.ChatAPI {
+		completion, err = inference.NewOpenAIChatCompletion(openaiClient, inference.OpenAIChatCompletionConfig{
+			OpenAICompletionConfig: inference.OpenAICompletionConfig{
+				Model:            config.OpenaiModel,
+				AdditionalParams: []byte(config.AdditionalParams),
+			},
+			Prompt: config.ChatAPIPrompt,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create openai client: %w", err)
+		}
+	} else {
+		completion, err = inference.NewOpenAICompletion(openaiClient, inference.OpenAICompletionConfig{
+			Model:            config.OpenaiModel,
+			AdditionalParams: []byte(config.AdditionalParams),
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create openai client: %w", err)
+		}
 	}
 
 	if config.ResponsesAPI {
